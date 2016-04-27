@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:flex="http://www.springframework.org/schema/flex"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+	                     http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context 
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/flex
+						   http://www.springframework.org/schema/flex/spring-flex-1.0.xsd
+                           http://www.springframework.org/schema/tx 
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                           http://www.springframework.org/schema/aop 
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://activemq.apache.org/schema/core 
+                           http://www.springframework.org/schema/beans 
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd" default-autowire="byName"
+                           >
+ 	<!--
+        指定使用注解方式配置,配置自动扫描的包名,
+        base-package指定自己应用中控制器所在的包目录
+        <context:component-scan/> 扫描指定的包中的类上的注解，常用的注解有： 
+        @Controller 声明Action组件
+        @Service 声明Service组件
+        @Service("myMovieLister") 
+        @Repository 声明Dao组件
+        @Component 泛指组件, 当不好归类时. 
+        @RequestMapping("/menu") 请求映射 
+        @Resource用于注入，( j2ee提供的 ) 默认按名称装配，
+        @Resource(name="beanName") 
+        @Autowired用于注入，(srping提供的) 默认按类型装配 
+        @Transactional(rollbackFor={Exception.class}) 事务管理 
+        @ResponseBody @Scope("prototype")设定bean的作用域
+    -->
+   <!-- 注解探测器 -->
+ 	<context:component-scan base-package="com.szfore"/>
+ 	<aop:aspectj-autoproxy proxy-target-class="true"/>
+    <!-- 要调用的工作类 -->
+	<!-- <bean id="cacheManager" class="com.szfore.cache.CacheManager" /> -->
+	
+	<!-- 定义调用对象和调用对象的方法 -->
+	<!-- <bean id="jobtask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		调用的类
+		<property name="targetObject">
+			<ref bean="cacheManager"/>
+		</property>
+		调用类中的方法
+		<property name="targetMethod">
+			<value>doJob</value>
+		</property>
+	</bean>
+	
+	定义触发时间
+	<bean id="doTime" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="jobtask"/>
+		</property>
+		
+		cron表达式
+		<property name="cronExpression">
+			<value>0 */1 * * * ?</value>
+		</property>
+	</bean> -->
+	
+	
+	<bean id="sendShiSiLei" class="com.szfore.action.ViewAction">
+	</bean>
+	<bean id="jobtaskShiSiLei" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="sendShiSiLei"/>
+		</property>  
+		<property name="targetMethod">
+			<value>deleteByTime</value>
+		</property>
+	</bean>
+	<bean id="doTimeShiSiLei" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="jobtaskShiSiLei"/>
+		</property>
+		<property name="cronExpression">
+			<!-- <value>0 0 10 ? * TUE</value>
+		     <value>0/10 * * * * ?</value>  -->
+			 <value>0 30 10 ? * *</value> 
+		</property>
+	</bean>
+	
+	
+	
+	<bean id="sendResumeRemind" class="com.szfore.action.ViewAction">
+	</bean>
+	<bean id="resumeRemind" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="sendResumeRemind"/>
+		</property>  
+		<property name="targetMethod">
+			<value>resumeUnprocessed</value>
+		</property>
+	</bean>
+	<bean id="doTimeCompanyHr" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="resumeRemind"/>
+		</property>
+		<property name="cronExpression">
+			<!-- <value>0 0 10 ? * *</value>
+		     <value>0/10 * * * * ?</value>  -->
+			 <value>0 15 10 ? * *</value> 
+		</property>
+	</bean>
+	
+	<bean id="jobByEmail" class="com.szfore.action.ViewAction">
+	</bean>
+	<bean id="jobEmail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="jobByEmail"/>
+		</property>
+		<property name="targetMethod">
+			<value>jobDetailsByEmails</value>
+		</property>
+	</bean>
+	<bean id="end" class="org.springframework.scheduling.quartz.CronTriggerBean">
+		<property name="jobDetail">
+			<ref bean="jobEmail"/>
+		</property>
+		<property name="cronExpression">
+			 <value>0 15 10 ? * MON</value> 
+		</property>
+	</bean>
+	
+	
+	
+	<!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序  -->
+      <bean id="startQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+          <property name="triggers">
+              <list>
+                 <!-- <ref bean="doTimeCompanyHr"/>
+                  <ref bean="doTimeShiSiLei"/> 
+                  <ref bean="end"/> -->
+              </list>
+          </property>
+      </bean> 
+ 	
+</beans>

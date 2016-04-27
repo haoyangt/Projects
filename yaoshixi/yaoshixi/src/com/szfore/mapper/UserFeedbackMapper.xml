@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.UserFeedbackMapper">
+ 	<insert id="insertUserFeedback" keyProperty="login.id" useGeneratedKeys="true">
+ 		insert into u_user_feedback
+ 		 (userId, content,fbtime,status)
+ 	    values
+ 		 (#{userFeedback.userId},#{userFeedback.content},now(),0)
+ 	</insert>
+ 	
+ 	
+</mapper> 

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.InterviewNoticeMapper">
+ 	<insert id="insertInterviewNotice">
+ 		insert into 
+ 			u_interview_notice
+ 				(userId,companyId,jobId,interviewTime,place,contactPerson,contactPhone,content,status)
+ 			values
+ 				(#{in.userId},#{in.companyId},#{in.jobId},#{in.interviewTime},#{in.place},#{in.contactPerson},#{in.contactPhone},#{in.content},#{in.status})
+ 	</insert>
+ 	
+ 	<select id="findInterviewNotice" resultType="map">
+ 		SELECT a.companyName,b.jobName,c.id FROM c_company_info a INNER JOIN c_job b ON a.id = b.companyId 
+	INNER JOIN u_interview_notice c ON b.id = c.jobId 
+	 WHERE c.userId=#{userId} and c.status=0  
+ 	</select>
+ 	
+ 	<select id="findIntervBywx" resultType="map">
+ 		SELECT a.companyName,b.jobName,c.id,c.status FROM u_interview_notice c 
+ 			LEFT JOIN c_job b ON b.id=c.jobId 
+ 			LEFT JOIN c_company_info a ON a.id=c.companyId 
+ 			WHERE c.userId=#{userId}
+ 	</select>
+ 	
+ 	<select id="findInterYaoQing" resultType="map">
+ 	SELECT a.companyName,b.jobName,c.id FROM c_company_info a INNER JOIN c_job b ON a.id = b.companyId 
+	INNER JOIN u_interview_notice c ON b.id = c.jobId 
+	 WHERE c.userId=#{userId} and c.jobId=#{jobId} 
+ 	</select>
+ 	
+ 	<select id="findInterview" resultType="map">
+ 		SELECT a.companyName,b.jobName,c.id FROM c_company_info a INNER JOIN c_job b ON a.id = b.companyId 
+	INNER JOIN u_interview_notice c ON b.id = c.jobId 
+	 WHERE c.userId=#{userId} and c.jobId=#{jobId}
+ 	</select>
+ 	
+ 	<update id="updateStatus">
+ 		update u_interview_notice set status = 1 where id = #{id}
+ 	</update>
+ 	
+ 	<select id="findInterviewNoticeById" resultType="map">
+ 		SELECT a.*,b.jobName,c.companyName,d.userName,c.email 
+		FROM u_interview_notice a LEFT JOIN c_job b ON a.jobId = b.id 
+			LEFT JOIN c_company_info c ON c.id=a.companyId 
+			LEFT JOIN u_userbasicinfo d ON a.userId=d.userId
+		WHERE a.id = #{id}
+ 	</select>
+ 	<select id="findInterByUserId" resultType="map">
+ 		SELECT
+		  a.userId,a.interviewTime,a.place,
+		  a.contactPerson,a.contactPhone,
+		  a.content,b.*
+		FROM u_interview_notice a
+		  INNER JOIN c_job b
+		    ON a.jobId = b.id
+		      AND a.userId = #{userId }
+		      AND a.jobId = #{jobId }
+ 	</select>
+ 	<!-- wanglq新增 -->
+ 	<select id="findInterviewNoticeByWx" resultType="map">
+ 		SELECT a.id,a.companyId,a.content,b.jobName,c.companyName,c.companyLogo 
+ 			FROM u_interview_notice a
+				LEFT JOIN c_company_info c  ON c.id = a.companyId
+		  		LEFT JOIN c_job b ON a.jobId = b.id 		    
+			WHERE a.userId = #{userId}
+ 	</select>
+ 	
+</mapper> 

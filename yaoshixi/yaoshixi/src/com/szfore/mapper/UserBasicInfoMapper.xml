@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.UserBasicInfoMapper">
+	
+ 	<select id="findUserBasicInfoByUserId" resultType="com.szfore.model.UserBasicInfo">
+ 		select * from u_userBasicInfo where userId = #{userId}
+ 	</select>
+ 	<select id="findByUserId" resultType="com.szfore.model.UserBasicInfo">
+ 		SELECT 
+ 			*
+ 		FROM 
+ 			u_userBasicInfo  
+ 		WHERE 
+ 			userId = #{userId}
+ 	</select>
+ 	<insert id="insertUserBasicInfo">
+ 		insert into u_userBasicInfo
+ 			(userId, userName,telPhone,city,gender,birthDay,email,headImg) 
+ 		values 
+ 		   (#{userBasicInfo.userId},
+ 		    #{userBasicInfo.userName},
+ 		    #{userBasicInfo.telPhone},
+ 		    #{userBasicInfo.city},
+ 		    #{userBasicInfo.gender},
+ 		    #{userBasicInfo.birthDay},
+ 		    #{userBasicInfo.email},
+ 		    #{userBasicInfo.headImg}
+ 		    )
+ 	</insert>
+ 	
+ 	<update id="updateUserBasicInfo">
+ 		update 
+ 			u_userBasicInfo  
+ 		set
+	 		<if test="userBasicInfo.userName != null and userBasicInfo.userName != ''">
+	 		    userName = #{userBasicInfo.userName},
+	 		</if>
+	 		<if test="userBasicInfo.telPhone != null and userBasicInfo.telPhone != ''">
+	 			telPhone = #{userBasicInfo.telPhone},
+	 		</if>
+	 		<if test="userBasicInfo.city != null and userBasicInfo.city !=''">
+	 			city = #{userBasicInfo.city},
+	 		</if>
+	 		<if test="userBasicInfo.gender != null and userBasicInfo.gender != ''">
+	 			gender = #{userBasicInfo.gender},
+	 		</if>
+	 		<if test="userBasicInfo.headImg != null and userBasicInfo.headImg != ''">
+	 			headImg = #{userBasicInfo.headImg},
+	 		</if>
+	 		<if test="userBasicInfo.birthDay != null and userBasicInfo.birthDay !=''">
+	 			birthDay = #{userBasicInfo.birthDay },
+	 		</if>
+	 		<if test="userBasicInfo.email != null and userBasicInfo.email != ''">
+	 			email = #{userBasicInfo.email},
+	 		</if>
+	 		<if test="userBasicInfo.approach != null and userBasicInfo.approach !=''">
+	 			approach = #{userBasicInfo.approach},
+	 		</if>
+	 		<if test="userBasicInfo.jobCity != null and userBasicInfo.jobCity !=''">
+	 			jobCity = #{userBasicInfo.jobCity},
+	 		</if>
+	 		<if test="userBasicInfo.category != null and userBasicInfo.category != ''">
+	 			category = #{userBasicInfo.category},
+	 		</if>
+	 		<if test="userBasicInfo.stature != null and userBasicInfo.stature != ''">
+	 			stature = #{userBasicInfo.stature},
+	 		</if>
+	 		<if test="userBasicInfo.jobCategory != null and userBasicInfo.jobCategory != ''">
+	 			jobCategory = #{userBasicInfo.jobCategory},
+	 		</if>
+	 		<if test="userBasicInfo.selfDescription != null and userBasicInfo.selfDescription != ''">
+	 			selfDescription = #{userBasicInfo.selfDescription},
+	 		</if>
+	 		<if test="userBasicInfo.workReady != null and userBasicInfo.workReady != ''">
+	 			workReady = #{userBasicInfo.workReady},
+	 		</if>
+	 		<if test="userBasicInfo.monthReady != null and userBasicInfo.monthReady != ''">
+	 			monthReady = #{userBasicInfo.monthReady},
+	 		</if>
+	 		<if test="userBasicInfo.expose != null and userBasicInfo.expose != ''">
+	 			expose = #{userBasicInfo.expose},
+	 		</if>
+	 		<if test="userBasicInfo.giveHRword != null and userBasicInfo.giveHRword != ''">
+	 			giveHRword = #{userBasicInfo.giveHRword},
+	 		</if>
+	 		<if test="userBasicInfo.certificate != null and userBasicInfo.certificate != ''">
+	 			certificate = #{userBasicInfo.certificate},
+	 		</if>
+	 		<if test="userBasicInfo.skill != null and userBasicInfo.skill != ''">
+	 			skill = #{userBasicInfo.skill},
+	 		</if>
+	 		<if test="userBasicInfo.hobby != null and userBasicInfo.hobby != ''">
+	 			hobby = #{userBasicInfo.hobby},
+	 		</if>
+	 		<if test="userBasicInfo.experience != null and userBasicInfo.experience != ''">
+	 			experience = #{userBasicInfo.experience},
+	 		</if>
+	 		userId = #{userBasicInfo.userId}
+ 		where 
+ 			userId = #{userBasicInfo.userId}
+ 	</update>
+ 	<update id="updateAccessory">
+ 		update 
+ 			u_userBasicInfo  
+ 		set
+ 			accessory=#{accessory}
+ 		where 
+ 			userId = #{userId}	
+ 	</update>
+ 	<select id="findUserAll" resultType="java.util.HashMap">
+ 		SELECT 
+ 			a.userName,a.gender,a.birthDay,a.telPhone,a.city,a.email,
+ 			a.approach,b.university,b.education,b.major,b.enterUniversityYear 
+ 		FROM 
+ 			u_userbasicinfo a LEFT JOIN u_education_experience b 
+ 		ON a.userId=b.userId left join u_login c on c.id=a.userId 
+ 		<if test="page.params.userName != null and page.params.userName !='' and page.params.roleId != null and page.params.roleId != ''">
+ 			where a.userName like CONCAT('%',#{page.params.userName},'%') and c.roleId = #{page.params.roleId} 
+ 		</if>
+ 		<if test="(page.params.userName != null and page.params.userName !='') and (page.params.roleId == null or page.params.roleId == '')">
+ 			where a.userName like CONCAT('%',#{page.params.userName},'%')
+ 		</if> 
+ 		<if test="(page.params.roleId != null and page.params.roleId != '') and (page.params.userName == null or page.params.userName =='')">
+ 			where c.roleId = #{page.params.roleId}
+ 		</if>
+ 		 GROUP BY a.id	order by a.userName desc   
+ 	</select>
+ 	
+ 	<select id="findInvitation"  resultType="map">
+ 		SELECT 
+ 			a.*,b.majorAbility,b.university,b.education,d.status as hire
+ 		FROM 
+ 			u_userbasicinfo a LEFT JOIN u_education_experience b ON a.userId=b.userId 
+ 			AND b.education = (SELECT MAX(education) FROM u_education_experience where userId=a.userId) 
+ 			left join c_intern d on a.userId=d.userId 
+ 		WHERE 
+ 			a.userId NOT IN (SELECT userId FROM c_intern where companyId = #{companyId}) 
+ 			AND a.userId IN (SELECT id FROM u_login WHERE roleId=2) and expose = 0  
+ 			AND a.userName IS NOT NULL AND a.email IS NOT NULL AND b.university IS NOT NULL GROUP BY a.userName 
+ 	</select>
+ 	
+ 	<select id="resumeUser" resultType="java.util.HashMap">
+ 		SELECT e.* FROM c_company_info a LEFT JOIN c_job b ON a.id=b.companyId 
+			RIGHT JOIN u_user_job c ON b.id=c.jobId 
+			LEFT JOIN u_userbasicinfo e ON c.userId=e.userId  
+			WHERE a.userId=#{userId} AND a.id=#{companyId} and b.status=#{status}
+ 	</select>
+ 	<select id="findSchoolfellow" resultType="map">
+ 		SELECT 
+ 			a.userName, a.gender,c.university,c.college,c.major
+ 		FROM 
+ 			u_userbasicinfo a RIGHT JOIN c_intern b ON b.userId=a.userId 
+ 			LEFT JOIN u_education_experience c ON b.userId=c.userId  
+		WHERE 
+			companyId=#{companyId} 
+		AND 
+			university=(SELECT university FROM u_userbasicinfo WHERE userId=#{userId})
+ 	</select>
+ 	
+ 	<select id="findQuantity" resultType="java.lang.Integer">
+ 		SELECT 
+ 			quantity - (SELECT IFNULL(COUNT(*),0) FROM u_user_job WHERE userId = #{userId} AND TO_DAYS(diliverTime) = TO_DAYS(NOW())) As quantity 
+		FROM 
+			u_userbasicinfo 
+		WHERE 
+			userId = #{userId} AND 
+			(quantity - (SELECT IFNULL(COUNT(*),0) FROM u_user_job WHERE userId = #{userId} AND TO_DAYS(diliverTime) = TO_DAYS(NOW())) ) &gt;=0
+ 	</select>
+ 	<select id="findAllUserNum" resultType="java.lang.Integer">
+ 		SELECT COUNT(id) FROM u_userbasicinfo
+ 	</select>
+ 	<update id="updateQuantity">
+ 		update 
+ 			u_userBasicInfo  
+ 		set
+ 			quantity=quantity+1 
+ 		where 
+ 			userId = #{userId}
+ 	</update>
+ 	
+ 	<update id="updateExpose">
+ 		update 
+ 			u_userBasicInfo  
+ 		set
+ 			expose=#{num} 
+ 		where 
+ 			userId = #{userId}
+ 	</update>
+ 	
+ 	<select id="findDeliveryRecord" resultType="java.util.HashMap">
+ 		SELECT 
+ 			a.userName,c.jobName,d.companyName,b.diliverTime,b.status  
+ 		FROM 
+ 			u_user_job b left JOIN u_userbasicinfo a ON a.userId = b.userId 
+			LEFT JOIN c_job c ON b.jobId = c.id 
+			LEFT JOIN c_company_info d ON c.companyId=d.id 
+		<if test="page.params.userName != null and page.params.userName !='' and page.params.terrace != null and page.params.terrace != ''">
+ 			where (a.userName like CONCAT('%',#{page.params.userName},'%') or c.jobName like CONCAT('%',#{page.params.userName},'%') or 
+ 			d.companyName like CONCAT('%',#{page.params.userName},'%')) and b.terrace = #{page.params.terrace} 
+ 		</if> 
+		<if test="(page.params.userName != null and page.params.userName !='') and (page.params.terrace == null or page.params.terrace == '')">
+ 			where a.userName like CONCAT('%',#{page.params.userName},'%') or c.jobName like CONCAT('%',#{page.params.userName},'%') or 
+ 			d.companyName like CONCAT('%',#{page.params.userName},'%')
+ 		</if> 
+ 		<if test="(page.params.terrace != null and page.params.terrace != '') and (page.params.userName == null or page.params.userName =='')">
+ 			where b.terrace = #{page.params.terrace}
+ 		</if>	
+ 	</select>
+ 	
+ 	<select id="findTuijUser" resultType="java.util.HashMap">
+ 		SELECT 
+ 			a.*,b.majorAbility,b.university,b.education,d.status as hire 
+		FROM 
+			u_userbasicinfo a LEFT JOIN u_education_experience b ON a.userId=b.userId 
+ 			AND b.education = (SELECT MAX(education) FROM u_education_experience where userId=a.userId) 
+ 			left join c_intern d on a.userId=d.userId
+		WHERE
+ 			a.expose = 0 AND a.userId IN (SELECT id FROM u_login WHERE roleId=2) 
+ 			and a.userId not in (select userId from u_interview_notice where jobId = #{job.id}) 
+			<if test="job.category != null and job.category != ''">
+				AND a.category LIKE CONCAT('%',#{job.category},'%')
+			</if>
+			<if test="job.city != null and job.city != ''">
+				AND a.jobCity = #{job.city}
+			</if>
+			<if test="job.workTime != null and job.workTime != ''">
+		 		AND a.jobCategory = #{job.workTime}
+			</if>
+ 	</select>
+ 	<update id="updateQuaWx">
+ 	 	update 
+ 			u_userBasicInfo  
+ 		set
+ 			quantity=#{num} 
+ 		where 
+ 			userId = #{userId}
+ 	</update>
+ 	
+ 	<update id="updateImge">
+ 		update 
+ 			u_userBasicInfo  
+ 		set
+ 			headImg=#{imge} 
+ 		where 
+ 			userId = #{userId}
+ 	</update>
+ 	
+ 	<update id="updateByUserId">
+ 		UPDATE u_userbasicinfo SET viewCount = viewCount+1 WHERE userId=#{userId}
+ 	</update>
+ 	
+ 	<update id="updateByUserIdFx">
+ 		UPDATE u_userbasicinfo SET sharetimes = sharetimes+1 WHERE userId=#{userId}
+ 	</update>
+ 	
+ 	<select id="findReceiveResume" resultType="java.util.HashMap">
+ 		SELECT d.*,a.jobId,b.jobName,a.status FROM u_user_job a LEFT JOIN c_job b ON a.jobId=b.id 
+			LEFT JOIN c_company_info c ON b.companyId=c.id 
+			LEFT JOIN u_userbasicinfo d ON d.userId=a.userId 
+			WHERE c.userId=#{userId}
+ 	</select>
+</mapper> 

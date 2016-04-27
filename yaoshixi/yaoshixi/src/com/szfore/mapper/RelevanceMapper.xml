@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.RelevanceMapper">
+
+<select id="getUserRelevance" resultType="com.szfore.model.Relevance">
+ 		select * from c_relevance where userId=#{userId} and companyId=#{companyId} and status=#{status} and jobId=#{jobId} 
+ 	</select>
+ 	
+ 	<insert id="saveRelevance">
+ 		insert into c_relevance
+ 		 (userId, companyId,evaluateTime,status,content,jobId)
+ 	    values
+ 		 (#{userId},#{companyId},now(),#{status},#{content},#{jobId})
+ 	</insert>
+ 	
+ 	<update id="updateRelevance">
+ 		update c_relevance set content=#{content} 
+ 		where userId=#{userId} and companyId=#{companyId} and status=#{status} and jobId=#{jobId}
+ 	
+ 	</update>
+</mapper>

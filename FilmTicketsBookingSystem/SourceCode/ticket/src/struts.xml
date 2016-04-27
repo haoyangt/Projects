@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+	<include file="admin_struts.xml"></include>
+   <package name="default" namespace="/" extends="struts-default">
+       <action name="displayAllReleasedFilm" class="com.hy.action.FilmOperationAction" method="displayAllReleasedFilm">
+           <result name="OK">film_released.jsp</result>
+       </action>
+       <action name="displayAllReleaseSoonFilm" class="com.hy.action.FilmOperationAction" method="displayAllReleaseSoonFilm">
+           <result name="OK">film_release_soon.jsp</result>
+       </action>
+       <action name="displayAllReleasedFilmByName" class="com.hy.action.FilmOperationAction" method="displayAllReleasedFilmByName">
+           <result name="OK">film_released.jsp</result>
+       </action>
+       <action name="displayAllReleaseSoonFilmByName" class="com.hy.action.FilmOperationAction" method="displayAllReleaseSoonFilmByName">
+           <result name="OK">film_release_soon.jsp</result>
+       </action>
+       <action name="displayAllCinema" class="com.hy.action.CinemaOperationAction" method="displayAllCinema">
+           <result name="OK">cinema_list.jsp</result>
+       </action>
+       <action name="displayAllCinemaByName" class="com.hy.action.CinemaOperationAction" method="displayAllCinemaByName">
+           <result name="OK">cinema_list.jsp</result>
+       </action>
+       <action name="displayIndex" class="com.hy.action.IndexOperationAction" method="display">
+           <result name="OK">index.jsp</result>
+       </action>
+       <action name="filmDetail" class="com.hy.action.FilmAndCinemaDetailAction" method="filmDetail">
+           <result name="OK">film_detail.jsp</result>
+       </action>
+       <action name="cinemaDetail" class="com.hy.action.FilmAndCinemaDetailAction" method="cinemaDetail">
+           <result name="OK">cinema_detail.jsp</result>
+       </action>
+       <action name="displayTicketInCinemaDetail" class="com.hy.action.TicketOperationAction" method="displayTicketInCinemaDetail">
+           <result name="OK" >cinema_detail.jsp</result>
+       </action>
+       <action name="displayTicketInFilmDetail" class="com.hy.action.TicketOperationAction" method="displayTicketInFilmDetail">
+           <result name="OK" >film_detail.jsp</result>
+       </action>
+       <action name="login" class="com.hy.action.UserOperationAction" method="login">
+           <result name="index" >index.jsp</result>
+           <result name="cinema_detail" >cinema_detail.jsp</result>
+           <result name="cinema_list" >cinema_list.jsp</result>
+           <result name="film_detail" >film_detail.jsp</result>
+           <result name="film_release_soon" >film_release_soon.jsp</result>
+           <result name="film_released" >film_released.jsp</result>
+           <result name="order_management" >order_management.jsp</result>
+           <result name="admin_index" >admin_index.jsp</result>
+       </action>
+       <action name="logout" class="com.hy.action.UserOperationAction" method="logout">
+           <result name="index" >index.jsp</result>
+           <result name="cinema_detail" >cinema_detail.jsp</result>
+           <result name="cinema_list" >cinema_list.jsp</result>
+           <result name="film_detail" >film_detail.jsp</result>
+           <result name="film_release_soon" >film_release_soon.jsp</result>
+           <result name="film_released" >film_released.jsp</result>
+           <result name="order_management" >index.jsp</result>
+       </action>
+       <action name="changePwd" class="com.hy.action.UserOperationAction" method="changePwd">
+           <result name="index" >index.jsp</result>
+           <result name="cinema_detail" >cinema_detail.jsp</result>
+           <result name="cinema_list" >cinema_list.jsp</result>
+           <result name="film_detail" >film_detail.jsp</result>
+           <result name="film_release_soon" >film_release_soon.jsp</result>
+           <result name="film_released" >film_released.jsp</result>
+           <result name="order_management" >order_management.jsp</result>
+       </action>
+       <action name="register" class="com.hy.action.UserOperationAction" method="register">
+           <result name="index" >index.jsp</result>
+           <result name="cinema_detail" >cinema_detail.jsp</result>
+           <result name="cinema_list" >cinema_list.jsp</result>
+           <result name="film_detail" >film_detail.jsp</result>
+           <result name="film_release_soon" >film_release_soon.jsp</result>
+           <result name="film_released" >film_released.jsp</result>
+           <result name="order_management" >order_management.jsp</result>
+       </action>
+       <action name="getseatsequence" class="com.hy.action.TicketOperationAction" method="getSeatsequence">
+           <result name="cinema_detail" >cinema_detail.jsp</result>
+           <result name="film_detail" >film_detail.jsp</result>
+       </action>
+       <action name="buyticket" class="com.hy.action.TicketOperationAction" method="buyTicket">
+           <result name="cinema_detail" >cinema_detail.jsp</result>
+           <result name="film_detail" >film_detail.jsp</result>
+       </action>
+       <action name="displayAllBoughtTicket" class="com.hy.action.TicketOperationAction" method="displayAllBoughtTicket">
+           <result name="OK" >order_management.jsp</result>
+       </action>
+       <action name="refundTicket" class="com.hy.action.TicketOperationAction" method="refundTicket">
+           <result name="OK" >order_management.jsp</result>
+       </action>
+   </package>
+
+</struts>

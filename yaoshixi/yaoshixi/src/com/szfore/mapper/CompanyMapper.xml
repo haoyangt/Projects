@@ -1,0 +1,498 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.CompanyMapper">
+     <select id="findAll" resultType="com.szfore.model.CompanyInfo">
+     SELECT ab.* FROM (SELECT a.*,b.publishTime FROM c_company_info a LEFT JOIN c_job b 
+        	ON b.companyId=a.id WHERE b.status=1 
+         ORDER BY a.famous ASC,b.publishTime DESC ) ab GROUP BY ab.id ORDER BY ab.publishTime DESC ,ab.famous ASC 
+        <!-- select a.* from c_company_info a , c_job b 
+        	where b.companyId=a.id and b.status=1 
+       group by a.id order by b.publishTime desc,a.famous Asc   -->
+     </select>
+	
+	<select id="findAllSan" resultType="com.szfore.model.CompanyInfo">
+		SELECT ab.* FROM (SELECT a.*,b.publishTime FROM c_company_info a LEFT JOIN c_job b 
+        	ON b.companyId=a.id WHERE b.status=1 
+         ORDER BY a.famous ASC,b.publishTime DESC ) ab GROUP BY ab.id ORDER BY ab.publishTime DESC ,ab.famous ASC LIMIT 0,3
+	</select>
+
+ 	<select id="getCompanyInfoByCompanyId" resultType="com.szfore.model.CompanyInfo">
+ 		select
+ 			*
+ 		from
+ 			c_company_info
+ 		where
+ 			 id = #{companyId}
+ 	</select>
+ 	<select id="reviewPage" resultType="java.util.HashMap">
+ 		select
+ 			*
+ 		from
+ 			c_company_info
+ 		where
+ 			 certifyStatus = 0
+ 		<if test="page.params.keywords != null and page.params.keywords != ''">
+ 			and companyName like CONCAT('%',#{page.params.keywords},'%')
+ 		</if>
+ 	</select>
+ 	
+ 	<select id="authentication" resultType="java.util.HashMap">
+ 		select
+ 			*
+ 		from
+ 			c_company_info
+ 		where
+ 			 authentication = 1 and businessLicense &lt;&gt; '' AND  certifyStatus=1 
+ 		<if test="page.params.keywords != null">
+ 			and companyName like CONCAT('%',#{page.params.keywords},'%')
+ 		</if>
+ 	</select>
+ 	
+ 	<select id="companyPage" resultType="java.util.HashMap">
+ 		select
+ 			*
+ 		from
+ 			c_company_info where certifyStatus = 1 
+ 		<if test="page.params.keywords != null and page.params.keywords != ''">
+ 			and companyName like CONCAT('%',#{page.params.keywords},'%')
+ 		</if>
+ 		<if test="page.params.cdkeyStatus != null and page.params.cdkeyStatus != ''">
+ 			and cdkeyStatus = #{page.params.cdkeyStatus}
+ 		</if>
+ 		<if test="page.params.companyStatus == 2">
+ 			AND (cdkey = "" OR cdkey IS NULL )    
+ 		</if>
+ 		<if test="page.params.companyStatus == 1">
+ 			and cdkeyStatus=2 
+ 		</if>
+ 		<if test="page.params.companyAuthentication != null and page.params.companyAuthentication != ''">
+ 			and authentication = #{page.params.companyAuthentication} 
+ 		</if>
+ 		 order by createDate desc 
+ 	</select>
+ 	
+ 	<insert id="addCompany" keyProperty="companyInfo.id" useGeneratedKeys="true">
+ 		insert into
+ 			c_company_info(
+ 			userId, 
+			companyName, 
+			companyShortName, 
+			city, 
+			nature, 
+			filedes, 
+			major,
+			scale, 
+			addr,
+			companyDesc,
+			certifyStatus,
+			growthStage,
+			homePage,
+			createDate,
+			businessLicense,
+			organizationCode,
+			famous,email,phone
+		)values(
+           	#{companyInfo.userId},
+           	#{companyInfo.companyName},
+           	#{companyInfo.companyShortName},
+           	#{companyInfo.city},
+           	#{companyInfo.nature},
+           	#{companyInfo.filedes},
+           	#{companyInfo.major},
+           	#{companyInfo.scale},
+           	#{companyInfo.addr},
+           	#{companyInfo.companyDesc},
+           	#{companyInfo.certifyStatus},
+           	#{companyInfo.growthStage},
+           	#{companyInfo.homePage},
+           	#{companyInfo.createDate},
+           	#{companyInfo.businessLicense},
+           	#{companyInfo.organizationCode},
+           	#{companyInfo.famous},#{companyInfo.email},#{companyInfo.phone}
+           	)
+ 	</insert>
+ 	<insert id="addExcel" keyProperty="companyInfo.id" useGeneratedKeys="true">
+ 		insert into
+ 			c_company_info(
+ 			userId, 
+			companyName, 
+			companyShortName, 
+			companySlogan,
+			city, 
+			email,
+			phone,
+			nature, 
+			scale, 
+			filedes,
+			major,
+			addr,
+			companyDesc,
+			certifyStatus,
+			growthStage,
+			homePage,
+			famous,
+			companyLogo,
+			createDate,
+			cdkey
+		)values(
+           	#{companyInfo.userId},
+           	#{companyInfo.companyName},
+           	#{companyInfo.companyShortName},
+           	#{companyInfo.companySlogan},
+           	#{companyInfo.city},
+           	#{companyInfo.email},
+           	#{companyInfo.phone},
+           	#{companyInfo.nature},
+           	#{companyInfo.scale},
+           	#{companyInfo.filedes},
+           	#{companyInfo.major},
+           	#{companyInfo.addr},
+           	#{companyInfo.companyDesc},
+           	#{companyInfo.certifyStatus},
+           	#{companyInfo.growthStage},
+           	#{companyInfo.homePage},
+           	#{companyInfo.famous},
+           	#{companyInfo.companyLogo},
+           	#{companyInfo.createDate},
+           	#{companyInfo.cdkey}
+           	)
+ 	</insert>
+ 	
+ 	<select id="searchCompany" resultType="com.szfore.model.CompanyInfo">
+ 		select
+ 			*
+ 		from
+ 			c_company_info
+ 			 <if test="list != null">
+			     where id in 
+			    <foreach  item="item" index="index" collection="list" open="(" separator="," close=")">
+			    	#{item }
+			    </foreach>
+		    </if>
+ 			
+ 	</select>
+ 	
+ 	<select id="getCompanyInfoOf" resultType="com.szfore.model.CompanyInfo">
+ 		select * from c_company_info where userId = #{userId}
+ 	</select>
+ 	
+ 	<select id="getCompanyByJobId" resultType="com.szfore.model.CompanyInfo">
+ 		select
+ 			a.* 
+ 		from
+ 			c_company_info a , c_job b 
+ 		where 
+ 			a.id = b.companyId and b.id = #{jobId}
+ 	</select>
+ 	
+ 	<update id="reviewPass">
+ 		update
+ 			c_company_info
+ 		set certifyStatus=1
+ 		where id = #{companyId}
+ 	</update>
+ 	<update id="authenticationPass">
+ 		update
+ 			c_company_info
+ 		set authentication=2
+ 		where id = #{companyId}
+ 	</update>
+ 	<update id="updateCompanyById">
+ 		update
+ 			c_company_info
+ 		set
+			<if test="companyInfo.companyShortName != null and companyInfo.companyShortName !=''">
+				companyShortName = #{companyInfo.companyShortName },
+			</if>
+			<if test="companyInfo.city != null and companyInfo.city != ''">
+				city = #{companyInfo.city },
+			</if>
+			<if test="companyInfo.companyLogo != null and companyInfo.companyLogo != ''">
+				companyLogo = #{companyInfo.companyLogo },
+			</if>
+			<if test="companyInfo.filedes != null and companyInfo.filedes != ''">
+				filedes = #{companyInfo.filedes },
+			</if>
+			<if test="companyInfo.scale != null and companyInfo.scale != ''">
+				scale = #{companyInfo.scale },
+			</if>
+			<if test="companyInfo.nature != null and companyInfo.nature !=''">
+				nature = #{companyInfo.nature },
+			</if>
+			<if test="companyInfo.homePage != null and companyInfo.homePage != ''">
+				homePage = #{companyInfo.homePage },
+			</if>
+			<if test="companyInfo.companyDesc != null and companyInfo.companyDesc !=''">
+				companyDesc = #{companyInfo.companyDesc },
+			</if>
+			<if test="companyInfo.growthStage != null and companyInfo.growthStage !=''">
+				growthStage = #{companyInfo.growthStage },
+			</if>
+			<if test="companyInfo.mark != null and companyInfo.mark !=''">
+				mark = #{companyInfo.mark },
+			</if>
+			<if test="companyInfo.founder != null and companyInfo.founder !=''">
+				founder = #{companyInfo.founder },
+			</if>
+			<if test="companyInfo.businessLicense != null and companyInfo.businessLicense != ''">
+			 	businessLicense=#{companyInfo.businessLicense },
+			</if>
+			<if test="companyInfo.organizationCode != null and companyInfo.organizationCode !=''">
+			 	organizationCode=#{companyInfo.organizationCode },
+			</if>
+			<if test="companyInfo.famous != null and companyInfo.famous != ''">
+			 	famous=#{companyInfo.famous },
+			</if>
+			<if test="companyInfo.companyName != null and companyInfo.companyName !=''">
+				companyName = #{companyInfo.companyName },
+			</if>
+			<if test="companyInfo.certifyStatus != null and companyInfo.certifyStatus !=''">
+				certifyStatus = #{companyInfo.certifyStatus },
+			</if>
+			<if test="companyInfo.addr != null and companyInfo.addr !=''">
+				addr = #{companyInfo.addr },
+			</if>
+			<if test="companyInfo.companySlogan != null and companyInfo.companySlogan !=''">
+				companySlogan = #{companyInfo.companySlogan },
+			</if>
+			id = #{companyInfo.id} 
+ 		where id = #{companyInfo.id}
+ 	</update>
+ 	
+ 	<update id="updateCompanyByUserId">
+ 		update
+ 			c_company_info
+ 		set
+			<if test="companyInfo.companyShortName != null and companyInfo.companyShortName !=''">
+				companyShortName = #{companyInfo.companyShortName },
+			</if>
+			<if test="companyInfo.city != null and companyInfo.city != ''">
+				city = #{companyInfo.city },
+			</if>
+			<if test="companyInfo.companyLogo != null and companyInfo.companyLogo != ''">
+				companyLogo = #{companyInfo.companyLogo },
+			</if>
+			<if test="companyInfo.filedes != null and companyInfo.filedes != ''">
+				filedes = #{companyInfo.filedes },
+			</if>
+			<if test="companyInfo.scale != null and companyInfo.scale != ''">
+				scale = #{companyInfo.scale },
+			</if>
+			<if test="companyInfo.nature != null and companyInfo.nature !=''">
+				nature = #{companyInfo.nature },
+			</if>
+			<if test="companyInfo.homePage != null and companyInfo.homePage != ''">
+				homePage = #{companyInfo.homePage },
+			</if>
+			<if test="companyInfo.companyDesc != null and companyInfo.companyDesc !=''">
+				companyDesc = #{companyInfo.companyDesc },
+			</if>
+			<if test="companyInfo.growthStage != null and companyInfo.growthStage !=''">
+				growthStage = #{companyInfo.growthStage },
+			</if>
+			<if test="companyInfo.mark != null and companyInfo.mark !=''">
+				mark = #{companyInfo.mark },
+			</if>
+			<if test="companyInfo.founder != null and companyInfo.founder !=''">
+				founder = #{companyInfo.founder },
+			</if>
+			<if test="companyInfo.businessLicense != null and companyInfo.businessLicense != ''">
+			 	businessLicense=#{companyInfo.businessLicense },
+			</if>
+			<if test="companyInfo.organizationCode != null and companyInfo.organizationCode !=''">
+			 	organizationCode=#{companyInfo.organizationCode },
+			</if>
+			<if test="companyInfo.famous != null and companyInfo.famous != ''">
+			 	famous=#{companyInfo.famous },
+			</if>
+			<if test="companyInfo.companyName != null and companyInfo.companyName !=''">
+				companyName = #{companyInfo.companyName },
+			</if>
+			<if test="companyInfo.certifyStatus != null and companyInfo.certifyStatus !=''">
+				certifyStatus = #{companyInfo.certifyStatus },
+			</if>
+			<if test="companyInfo.addr != null and companyInfo.addr !=''">
+				addr = #{companyInfo.addr },
+			</if>
+			email = #{companyInfo.email} 
+ 		where userId = #{companyInfo.userId}
+ 	</update>
+ 	
+ 	<select id="jobCount" resultType="java.util.HashMap">
+ 		select count(id) as cnt,companyid from c_job where companyid in 
+ 		<foreach collection="ids" item="id"  open="(" separator="," close=")">  
+            #{id}
+        </foreach>
+        <if test="status != 0">
+        	 and  status=#{status}
+        </if>
+ 	</select>
+ 	
+ 	<select id="getTopCompanys" resultType="map">
+ 		SELECT 
+ 			id,companyName,companyLogo,
+ 			SUBSTRING(companyShortName,1,5) AS companyShortName,
+ 			SUBSTRING(companyDesc,1,16) AS companyDesc,
+ 			SUBSTRING(companySlogan,1,16) AS companySlogan 
+ 		FROM 
+ 			c_company_info 
+ 		where 
+ 			certifyStatus=1 order by famous Asc,createDate desc LIMIT 0,5  
+ 	</select>
+ 	
+ 	<select id="getTopCompanysPhone" resultType="map">
+ 		SELECT 
+ 			id,companyName,companyLogo
+ 		FROM 
+ 			c_company_info 
+ 		where 
+ 			certifyStatus=1 order by famous Asc,createDate desc LIMIT 0,6  
+ 	</select>
+ 	
+ 	<select id="getCompanyByName" resultType="java.util.HashMap">
+ 		SELECT id,companyName from c_company_info where companyName in 
+ 		<foreach collection="list" item="companyName"  open="(" separator="," close=")">  
+            #{companyName}
+        </foreach>
+ 	</select>
+ 	<insert id="addCompanyList" >
+ 		INSERT INTO c_company_info (
+			userId, 
+			companyName, 
+			companyShortName, 
+			city, 
+			nature, 
+			filedes, 
+			scale, 
+			companyDesc,
+			certifyStatus,
+			growthStage,
+			homePage,
+			famous
+			) VALUES
+		<foreach collection="list" item="company"  open="" separator="," close="">  
+           	(
+           	#{company.userId},
+           	#{company.companyName},
+           	#{company.companyShortName},
+           	#{company.city},
+           	#{company.nature},
+           	#{company.filedes},
+           	#{company.scale},
+           	#{company.companyDesc},
+           	#{company.certifyStatus},
+           	#{company.growthStage},
+           	#{company.homePage},
+           	#{company.famous}
+           	)
+        </foreach>
+ 	</insert>
+ 	<select id="getCompanyByTerm" resultType="com.szfore.model.CompanyInfo">
+ 		select * from c_company_info where certifyStatus = 1 
+ 		<if test="companyName != '' and companyName != null">
+ 			and companyName like '%' #{companyName} '%' 
+ 		</if>
+ 		<if test="city != '' and city != null">
+ 			and city = #{city} 
+ 		</if>
+ 		<if test="companyScale != '' and companyScale != null">
+ 			and scale = #{companyScale} 
+ 		</if>
+ 		<if test="companyNature != '' and companyNature != null">
+ 			and nature = #{companyNature} 
+ 		</if>
+ 		<if test="companyIndustry != '' and companyIndustry != null">
+ 			and filedes = #{companyIndustry} 
+ 		</if>
+ 		<if test="majorList != '' and majorList != null">
+ 			and major in (${majorList}) 
+ 		</if>
+ 		<if test="authentication != '' and authentication != null">
+ 			and authentication = ${authentication}
+ 		</if>
+ 		  order by famous Asc,createDate desc  
+ 	</select>
+ 	
+ 	<select id="getCompanyByTermPhone" resultType="com.szfore.model.CompanyInfo">
+ 		select * from c_company_info where certifyStatus = 1 
+ 		<if test="companyName != '' and companyName != null and companyName != 'null'">
+ 			and companyName like '%' #{companyName} '%' 
+ 		</if>
+ 		<if test="city != '' and city != null">
+ 			and city = #{city} 
+ 		</if>
+ 		<if test="companyScale != '' and companyScale != null">
+ 			and scale = #{companyScale} 
+ 		</if>
+ 		<if test="companyNature != '' and companyNature != null">
+ 			and nature = #{companyNature} 
+ 		</if>
+ 		<if test="companyField != '' and companyField != null">
+ 			and filedes = #{companyField} 
+ 		</if>
+ 		<if test="authentication != '' and authentication != null">
+ 			and authentication = ${authentication}
+ 		</if>
+ 		  order by famous Asc,createDate desc limit 0,#{num} 
+ 	</select>
+ 	
+ 	<select id="getTuigCompanyByPhone" resultType="com.szfore.model.CompanyInfo">
+ 		select * from c_company_info where certifyStatus = 1 and generalize = 2 
+ 		<if test="companyName != '' and companyName != null and companyName != 'null'">
+ 			and companyName like '%' #{companyName} '%' 
+ 		</if>
+ 		<if test="city != '' and city != null">
+ 			and city = #{city} 
+ 		</if>
+ 		<if test="companyScale != '' and companyScale != null">
+ 			and scale = #{companyScale} 
+ 		</if>
+ 		<if test="companyNature != '' and companyNature != null">
+ 			and nature = #{companyNature} 
+ 		</if>
+ 		<if test="companyField != '' and companyField != null">
+ 			and filedes = #{companyField} 
+ 		</if>
+ 		<if test="authentication != '' and authentication != null">
+ 			and authentication = ${authentication}
+ 		</if>
+ 		  order by famous Asc,createDate desc limit 0,#{num} 
+ 	</select>
+ 	
+ 	
+ 	<select id="getCompanyBycdkey" resultType="com.szfore.model.CompanyInfo">
+ 		select * from c_company_info where cdkey = #{cdkey} and cdkeyStatus=1 
+ 	</select>
+ 	
+ 	<update id="updateByCdkey">
+ 		update
+ 			c_company_info
+ 		set 
+ 			email = #{email},
+ 			userId=#{userId},
+ 			cdkeyStatus=2 
+ 		where 
+ 			cdkey = #{cdkey}
+ 	</update>
+ 	
+ 	<select id="getCompanyByEmail" resultType="com.szfore.model.CompanyInfo">
+ 		select a.* from c_company_info a , u_login b where a.userId=b.id and b.email=#{email}
+ 	</select>
+ 	
+ 	<update id="updateUserIdById">
+ 		update
+ 			c_company_info
+ 		set 
+ 			userId=#{userId},
+ 			cdkey = ""    
+ 		where 
+ 			id = #{companyId}
+ 	</update>
+ 	
+ 	<select id="getByCompName" resultType="com.szfore.model.CompanyInfo">
+ 		select * from c_company_info where companyName = #{companyName} 
+ 	</select>
+</mapper> 

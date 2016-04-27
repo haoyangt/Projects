@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.LoginMapper">
+ 	
+ 	<select id="login" resultType="com.szfore.model.Login">
+ 		select * from u_login where email = #{email}
+ 	</select>
+ 	
+ 	<select id="loginByCom" resultType="com.szfore.model.Login">
+ 		SELECT * FROM u_login WHERE email=#{email} AND roleId=1
+ 	</select>
+ 	
+ 	<select id="loginUser" resultType="com.szfore.model.Login">
+ 		SELECT * FROM u_login WHERE email=#{email} AND roleId=2
+ 	</select>
+ 	
+ 	<select id="findUserByEmail" resultType="com.szfore.model.Login">
+ 		select * from u_login where email = #{email}
+ 	</select>
+ 	<select id="findUserById" resultType="com.szfore.model.Login">
+ 		select * from u_login where id = #{userId}
+ 	</select>
+ 	<select id="list" resultType="map">
+ 		select 
+ 			userId, password
+ 		from
+ 			u_login
+ 	</select>
+ 	
+ 	<insert id="insertUser" keyProperty="login.id" useGeneratedKeys="true">
+ 		insert into u_login
+ 		(email,password,roleId,registTime,registId,activeStatus)
+ 		values
+ 		(#{login.email},#{login.password},#{login.roleId},now(),#{login.registId},#{login.activeStatus})
+ 	</insert>
+ 	
+ 	<select id="selectOAuthUser" resultType="com.szfore.model.OAuthVO">
+ 		select * from u_oauth where joinId = #{joinId}
+ 	</select>
+ 	<!-- 查询绑定微信的用户 -->
+ 	<select id="selectOAuthUserByUser" resultType="com.szfore.model.OAuthVO">
+ 		select * from u_oauth where userId = #{userId} 
+ 	</select>
+ 	
+ 	<select id="oAuthAccessToken" resultType="com.szfore.model.OAuthVO">
+ 		select * from u_oauth where userId = #{userId} and accessToken = #{accessToken}
+ 	</select>
+ 	
+ 	<select id="findOAuthByJobId" resultType="com.szfore.model.OAuthVO">
+ 		SELECT c.* FROM c_job a 
+ 			LEFT JOIN c_company_info b ON a.companyId=b.id 
+ 			LEFT JOIN u_oauth c ON b.userId=c.userId 
+ 			WHERE a.id=#{jobId}
+ 	</select>
+ 	
+ 	<insert id="insertOAuthUser" useGeneratedKeys="true">
+ 		insert into u_oauth
+ 		(userId,joinId,nickName,joinDate,accessToken,type)
+ 		values
+ 		(#{userId},#{joinId},#{nickName},now(),#{accessToken},#{type})
+ 	</insert>
+ 	<!-- 重新绑定 -->
+ 	<delete id="deleteOAuthUserByUser">
+ 		delete from u_oauth where userId=#{userId}
+ 	</delete>
+ 	<update id="updateOAuthUser">
+ 		update u_oauth set userId=#{userId} where joinId=#{joinId}
+ 	</update>
+ 	
+ 	<delete id="deleteOAuthUserByJoinId">
+ 		delete from u_oauth where joinId=#{joinId}
+ 	</delete>
+ 	<update id="updateOAuthUserForNewWxId">
+ 		update u_oauth set joinId=#{joinId} where userId=#{userId}
+ 	</update>
+ 	
+ 	
+ 	<update id="updateUserLoginInfo">
+ 		update u_login set lastLoginTime = now(),totalLoginTimes = totalLoginTimes+1
+ 	</update>
+ 	
+ 	<update id="activeUserAccount">
+ 		update u_login set activeStatus = 1 where id = #{userId } and registId = #{registId }
+ 	</update>
+ 	
+ 	<select id="findLoginByUserId"  resultType="com.szfore.model.Login">
+ 		select * from u_login where id = #{userId }
+ 	</select>
+ 	<!-- 新增2014-03-24 -->
+ 	<select id="findLoginByJoinId"  resultType="com.szfore.model.Login">
+ 		select a.* from u_login a, u_oauth b where a.id = b.userId and b.joinId = #{joinId}
+ 	</select>
+ 	<select id="findUserIdsByUsername" resultType="java.util.HashMap">
+ 		select id,email from u_login where
+ 		email in
+ 		<foreach  item="email" collection="list" open="(" separator="," close=")">
+	    	#{email }
+	    </foreach>
+ 	</select>
+ 	
+ 	<update id="updateByEmail">
+ 		update u_login set password = #{password } where email = #{email } 
+ 	</update>
+ 	
+ 	<update id="updateByUserId">
+ 		update 
+ 			u_login 
+ 		set 
+ 			email = #{email },
+ 			password = "670B14728AD9902AECBA32E22FA4F6BD" 
+ 		where id = #{userId } 
+ 	</update>
+ 	
+ 	<update id="updateRoleId">
+ 		update u_login set roleId = 1 where id = #{userId }
+ 	</update>
+ 	
+ 	<select id="getAccessToken" resultType="com.szfore.model.AccessToken">
+ 		SELECT * FROM w_access_token WHERE UNIX_TIMESTAMP() - UNIX_TIMESTAMP(expiresIn) &lt; 7200 and corpId = #{corpId}
+ 	</select>
+ 	
+ 	<select id="getTicket" resultType="java.util.HashMap">
+ 		SELECT * FROM w_ticket WHERE UNIX_TIMESTAMP() - UNIX_TIMESTAMP(expiresIn) &lt; 7200 and corpId = #{corpId}
+ 	</select>
+ 	
+ 	
+ 	<select id="getAccesstoinByCorpId" resultType="com.szfore.model.AccessToken">
+ 		SELECT * FROM w_access_token WHERE corpId = #{corpId}
+ 	</select>
+ 	<update id="updateAccesstion">
+		UPDATE w_access_token 
+			SET  
+				token = #{access_token} , 
+				expiresIn = #{expires_in}
+			WHERE
+				corpId = #{corpId}
+	</update>
+	
+	<update id="updateTicket">
+		UPDATE w_ticket 
+			SET  
+				ticket = #{ticket} , 
+				expiresIn = #{expires_in}
+			WHERE
+				corpId = #{corpId}
+	</update>
+	
+	<insert id="addAccesstion">
+		INSERT INTO w_access_token( 
+						corpId, 
+						token, 
+						expiresIn
+				)VALUES(
+						#{corpId}, 
+						#{access_token}, 
+						#{expires_in}
+				)
+	</insert>
+	
+	<select id="findCompanyByUid" resultType="java.util.HashMap">
+		SELECT a.id ,b.id as companyId FROM u_login a,c_company_info b 
+				WHERE a.id=b.userId AND a.id = #{userId} AND b.certifyStatus=1 AND a.activeStatus=1
+	</select>
+</mapper> 

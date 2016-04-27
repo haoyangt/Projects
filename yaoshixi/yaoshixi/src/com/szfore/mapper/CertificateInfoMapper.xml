@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.CertificateInfoMapper">
+ 	<select id="loadCertificateInfo" resultType="com.szfore.action.company.vo.CertificateInfo">
+ 		select
+ 			u.userName as internName, u.university, u.college, u.major,
+ 			cj.jobName,
+ 			c.companyName 
+ 		from
+ 			u_user_job uj
+ 		inner join
+ 			u_userbasicinfo u
+ 			on u.userId = uj.userId
+ 		inner join
+ 			c_job cj
+ 			on cj.id = uj.jobId
+ 		inner join
+ 			c_company_info c
+ 			on c.id = cj.companyId
+ 		where
+ 			uj.userId = #{userId}
+ 			and  cj.companyId = #{companyId}
+ 			and  uj.jobId = #{jobId}
+ 	</select>
+</mapper> 

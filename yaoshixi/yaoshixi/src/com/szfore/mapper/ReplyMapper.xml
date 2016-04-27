@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.ReplyMapper">
+ 	
+ 	<insert id="insertReply">
+ 		insert into 
+ 			f_reply(topicId,pid,userId,replyTime,replyContent)
+ 		values 
+ 			(#{reply.topicId},#{reply.pid},#{reply.userId},#{reply.replyTime},#{reply.replyContent})
+ 	</insert>
+ 	
+ 	<select id="findAllReply" resultType="map">
+ 		SELECT
+		  a.*,
+		  b.userName
+		FROM f_reply a
+		  INNER JOIN u_userbasicinfo b
+		    ON a.userId = b.userId
+		      AND a.topicId = #{topicId } order by replyTime Asc 
+ 	</select>
+ 	
+</mapper> 

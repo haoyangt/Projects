@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.ExperienceMapper">
+	<insert id="interExperience" keyProperty="experience.id" useGeneratedKeys="true">
+		INSERT INTO 
+		u_experience (	
+			userId, 
+			sxCompanyName, 
+			sxPosition, 
+			ksTime, 
+			jsTime, 
+			sxConut
+		)VALUES( 
+			#{experience.userId}, 
+			#{experience.sxCompanyName}, 
+			#{experience.sxPosition}, 
+			#{experience.ksTime}, 
+			#{experience.jsTime}, 
+			#{experience.sxConut}
+		);
+	</insert>
+
+	<select id="findByUserId" resultType="map">
+		select * from u_experience where userId=#{userId} 
+	</select>
+	<select id="findByUid" resultType="map">
+		select * from u_experience where userId=#{userId} 
+	</select>
+	<update id="updateById">
+		UPDATE 
+			u_experience 
+		SET
+			<if test="experience.sxCompanyName != '' and experience.sxCompanyName != null">
+				sxCompanyName = #{experience.sxCompanyName}, 
+			</if>
+			<if test="experience.sxPosition != '' and experience.sxPosition != null">
+				sxPosition = #{experience.sxPosition},
+			</if>
+			<if test="experience.ksTime != '' and experience.ksTime != null"> 
+				ksTime = #{experience.ksTime} , 
+			</if>
+			<if test="experience.jsTime != '' and experience.jsTime != null">
+				jsTime = #{experience.jsTime}, 
+			</if>
+			<if test="experience.sxConut != '' and experience.sxConut != null">
+				sxConut = #{experience.sxConut} , 
+			</if>
+				userId = #{experience.userId}
+		WHERE
+				id = #{experience.id} 
+	</update>
+	
+	<delete id="deleteExperience">
+		DELETE FROM u_experience WHERE id = #{id} ;
+	</delete>
+</mapper>

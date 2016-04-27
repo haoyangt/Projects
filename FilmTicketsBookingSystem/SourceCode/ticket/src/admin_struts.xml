@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+   <package name="default2" namespace="/" extends="struts-default">
+       <action name="displayAllFilm" class="com.hy.action.AdminFilmOperationAction" method="displayAllFilm">
+           <result name="OK">admin_film_management.jsp</result>
+       </action>
+       <action name="updateFilm" class="com.hy.action.AdminFilmOperationAction" method="updateFilm">
+           <result name="OK">admin_film_management.jsp</result>
+       </action>
+       <action name="deleteFilm" class="com.hy.action.AdminFilmOperationAction" method="deleteFilm">
+           <result name="OK">admin_film_management.jsp</result>
+       </action>
+       <action name="addFilm" class="com.hy.action.AdminFilmOperationAction" method="addFilm">
+           <result name="OK">admin_film_management.jsp</result>
+       </action>
+       <action name="displayAllCinemaByAdmin" class="com.hy.action.AdminCinemaOperationAction" method="displayAllCinema">
+           <result name="OK">admin_cinema_management.jsp</result>
+       </action>
+       <action name="updateCinema" class="com.hy.action.AdminCinemaOperationAction" method="updateCinema">
+           <result name="OK">admin_cinema_management.jsp</result>
+       </action>
+       <action name="deleteCinema" class="com.hy.action.AdminCinemaOperationAction" method="deleteCinema">
+           <result name="OK">admin_cinema_management.jsp</result>
+       </action>
+       <action name="addCinema" class="com.hy.action.AdminCinemaOperationAction" method="addCinema">
+           <result name="OK">admin_cinema_management.jsp</result>
+       </action>
+       <action name="displayAllHall" class="com.hy.action.AdminHallOperationAction" method="displayAllHall">
+           <result name="OK">admin_hall_management.jsp</result>
+       </action>
+       <action name="updateHall" class="com.hy.action.AdminHallOperationAction" method="updateHall">
+           <result name="OK">admin_hall_management.jsp</result>
+       </action>
+       <action name="deleteHall" class="com.hy.action.AdminHallOperationAction" method="deleteHall">
+           <result name="OK">admin_hall_management.jsp</result>
+       </action>
+       <action name="addHall" class="com.hy.action.AdminHallOperationAction" method="addHall">
+           <result name="OK">admin_hall_management.jsp</result>
+       </action>
+       <action name="displaySeatselection" class="com.hy.action.AdminHallOperationAction" method="displaySeatselection">
+           <result name="OK">admin_hall_management.jsp</result>
+       </action>
+       <action name="updateSeatsequence" class="com.hy.action.AdminHallOperationAction" method="updateSeatsequence">
+           <result name="OK">admin_hall_management.jsp</result>
+       </action>
+       <action name="displayAdmin" class="com.hy.action.AdminUserOperationAction" method="displayAdmin">
+           <result name="OK">admin_user_management.jsp</result>
+       </action>
+       <action name="updateAdmin" class="com.hy.action.AdminUserOperationAction" method="updateAdmin">
+           <result name="OK">admin_user_management.jsp</result>
+       </action>
+       <action name="deleteAdmin" class="com.hy.action.AdminUserOperationAction" method="deleteAdmin">
+           <result name="OK">admin_user_management.jsp</result>
+       </action>
+       <action name="addAdmin" class="com.hy.action.AdminUserOperationAction" method="addAdmin">
+           <result name="OK">admin_user_management.jsp</result>
+       </action>
+       <action name="displayAllTicket" class="com.hy.action.AdminTicketOperationAction" method="displayAllTicket">
+           <result name="OK">admin_ticket_management.jsp</result>
+       </action>
+       <action name="updateTicket" class="com.hy.action.AdminTicketOperationAction" method="updateTicket">
+           <result name="OK">admin_ticket_management.jsp</result>
+       </action>
+       <action name="deleteTicket" class="com.hy.action.AdminTicketOperationAction" method="deleteTicket">
+           <result name="OK">admin_ticket_management.jsp</result>
+       </action>
+       <action name="addTicket" class="com.hy.action.AdminTicketOperationAction" method="addTicket">
+           <result name="OK">admin_ticket_management.jsp</result>
+       </action>
+       <action name="displaySlideinfo" class="com.hy.action.AdminSlideimgOperationAction" method="displaySlideinfo">
+           <result name="OK">admin_slideimg_management.jsp</result>
+       </action>
+       <action name="updateSlideinfo" class="com.hy.action.AdminSlideimgOperationAction" method="updateSlideinfo">
+           <result name="OK">admin_slideimg_management.jsp</result>
+       </action>
+       <action name="addSlideinfo" class="com.hy.action.AdminSlideimgOperationAction" method="addSlideinfo">
+           <result name="OK">admin_slideimg_management.jsp</result>
+       </action>
+       <action name="updateSlideimg" class="com.hy.action.AdminSlideimgOperationAction" method="updateSlideimg">
+           <result name="success">admin_slideimg_management.jsp</result>
+       </action>
+       <action name="deleteSlideinfo" class="com.hy.action.AdminSlideimgOperationAction" method="deleteSlideinfo">
+           <result name="OK">admin_slideimg_management.jsp</result>
+       </action>
+       <action name="updateFilmImg" class="com.hy.action.AdminFilmOperationAction" method="updateimg">
+           <result name="success">admin_film_management.jsp</result>
+       </action>
+       <action name="addFilmImg" class="com.hy.action.AdminFilmOperationAction" method="addimg">
+           <result name="success">admin_film_management.jsp</result>
+       </action>
+       <action name="updateCinemaImg" class="com.hy.action.AdminCinemaOperationAction" method="updateimg">
+           <result name="success">admin_cinema_management.jsp</result>
+       </action>
+       <action name="addCinemaImg" class="com.hy.action.AdminCinemaOperationAction" method="addimg">
+           <result name="success">admin_cinema_management.jsp</result>
+       </action>
+       <action name="displayAllTablename" class="com.hy.action.AdminExcelOperationAction" method="display">
+           <result name="success">admin_excel_management.jsp</result>
+       </action>
+       <action name="read" class="com.hy.action.AdminExcelOperationAction" method="read">
+           <result name="success">admin_excel_management.jsp</result>
+       </action>
+       <action name="write" class="com.hy.action.AdminExcelOperationAction" method="write">
+           <result name="success">admin_excel_management.jsp</result>
+       </action>
+       <action name="displayAllPermission" class="com.hy.action.AdminPermissionOperationAction" method="display">
+           <result name="success">admin_permission_management.jsp</result>
+       </action>
+       <action name="updateAllPermission" class="com.hy.action.AdminPermissionOperationAction" method="update">
+           <result name="success">admin_permission_management.jsp</result>
+       </action>
+       <action name="detelePermission" class="com.hy.action.AdminPermissionOperationAction" method="delete">
+           <result name="success">admin_permission_management.jsp</result>
+       </action>
+       <action name="addPermission" class="com.hy.action.AdminPermissionOperationAction" method="add">
+           <result name="success">admin_permission_management.jsp</result>
+       </action>
+   </package>
+
+</struts>

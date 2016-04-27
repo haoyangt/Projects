@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.SchoolRewardsMapper">
+<insert id="insertSchoolRewar" keyProperty="schoolRewards.id" useGeneratedKeys="true">
+		insert into
+ 			u_school_rewards(
+ 			schoolReward,
+ 			seminary,
+ 			rewardTime,
+ 			userId
+ 		)values(
+ 			#{schoolRewards.schoolReward},
+ 			#{schoolRewards.seminary},
+ 			#{schoolRewards.rewardTime},
+ 			#{schoolRewards.userId}
+ 		)
+	</insert>
+
+	<select id="findByUserId" resultType="map">
+		select * from u_school_rewards where userId=#{userId} 
+	</select>
+	<select id="findByUid" resultType="map">
+		select * from u_school_rewards where userId=#{userId} 
+	</select>
+	
+	<update id="updateById">
+		UPDATE 
+			u_school_rewards 
+		SET
+			<if test="schoolRewards.schoolReward != '' and schoolRewards.schoolReward != null">
+				schoolReward = #{schoolRewards.schoolReward}, 
+			</if>
+			<if test="schoolRewards.seminary != '' and schoolRewards.seminary != null">
+				seminary = #{schoolRewards.seminary},
+			</if>
+			<if test="schoolRewards.rewardTime != '' and schoolRewards.rewardTime != null"> 
+				rewardTime = #{schoolRewards.rewardTime} , 
+			</if>
+			userId = #{schoolRewards.userId}
+		WHERE
+			id = #{schoolRewards.id} 
+	</update>
+<delete id="deleteSchoolRewar">
+	DELETE FROM u_school_rewards WHERE id = #{id} ;
+</delete>
+</mapper>

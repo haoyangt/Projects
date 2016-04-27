@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.TagCompanyMapper">
+
+	<select id="selectTagCompanyByCompanyId" resultType="com.szfore.model.TagCompany">
+		select companyId, tagName from c_tag_company where companyId = #{companyId}
+	</select>
+ 	
+ 	<insert id="insertTagCompany">
+ 		insert into c_tag_company (companyId,tagName,mark)
+ 		values 
+ 		(#{tagCompany.companyId},#{tagCompany.tagName},#{tagCompany.mark})
+ 	</insert>
+ 	<delete id="deleteTagCompany">
+ 		delete from c_tag_company where companyId = #{tagCompany.companyId} and tagName=#{tagCompany.tagName}
+ 	</delete>
+ 	<delete id="deleteTagCompanyById">
+ 		delete from c_tag_company where id = #{id}
+ 	</delete>
+ 	
+ 	<select id="tagNumOf" resultType="int">
+ 		select 
+ 			count(*) as tagNum
+ 		from
+ 			c_tag_company
+ 		where
+ 			companyId = #{companyId}
+ 			and tagName = #{tagName}
+ 	</select>
+ 	
+ 	<select id="listCandidateTag" resultType="string">
+ 		select 
+ 			distinct tagName
+ 		from
+ 			c_tag_company
+ 	</select>
+</mapper> 

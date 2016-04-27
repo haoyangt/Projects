@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.ItSkillMapper">
+	<select id="findByUserId" resultType="map">
+		select * from u_it_skill where userId = #{userId} and familiarity=#{familiarity}
+	</select>
+	
+	<insert id="insertItSkill">
+		INSERT INTO 
+			u_it_skill ( 
+				userId, 
+				skill, 
+				familiarity
+			)VALUES(
+				#{itSkill.userId}, 
+				#{itSkill.skill}, 
+				#{itSkill.familiarity}
+			)
+	</insert>
+	<update id="updateById">
+		UPDATE 
+			u_it_skill 
+		SET
+			<if test="itSkill.userId !=null and itSkill.userId !=''">
+				userId = #{itSkill.userId}, 
+			</if>
+			<if test="itSkill.skill !=null and itSkill.skill !=''">
+				skill =  #{itSkill.skill} , 
+			</if>
+			<if test="itSkill.familiarity !=null and itSkill.familiarity !=''">
+				familiarity = #{itSkill.familiarity},
+			</if>
+			id = #{itSkill.id} 
+		WHERE
+			id = #{itSkill.id}
+	</update>
+	
+	<delete id="deleteById">
+		DELETE FROM u_it_skill WHERE id = #{id} ;
+	</delete>
+</mapper>

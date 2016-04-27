@@ -1,0 +1,106 @@
+/* Write your styles */
+html {
+  font-size:100%;
+}
+body{ background-color:#F7F7F7; font-size: 16px; /* =16px */}
+/* .am-header-title{font-size: 16px; } */
+.am-btn-sm, .am-btn-group-sm > .am-btn{ font-size:14px;}
+.header {text-align: center;}
+.header h1 {font-size: 200%;color: #333;margin-top: 30px;}
+.header p {font-size: 16px;}
+.login-div{width:350px; margin:0 auto;padding:10px;}
+.form-div{width:850px; margin:0 auto;}
+.form-div li{list-style-type: none}
+.form-div ul{margin:0;}
+.am-titlebar{margin:10px 0 10px;}
+.form-div label{display: block;font-size:14px;}
+.am-input-group-label .am-icon-lock{width:13px;}
+.list-div{max-width:900px;margin:0 auto;}
+.list-div p{ margin:2px 0;}
+.list-div h3{margin:5px 0;}
+.d{color:#999; font-size: 14px; font-weight: normal;}
+.a-style-div{margin:0; text-align:right;}
+.a-style-div a{margin-bottom:5px;}
+.a-style-div a i{width:15px;}
+.qnaire-eidtdiv{max-width:850px;margin:0 auto;padding:10px 0;}
+.qnaire-eidtdiv input[type="text"]{-webkit-appearance:none;}
+.am-panel-bd>.bg-color:first-child{border-top:none;}
+.am-panel-bd>.bg-select-color:first-child{border-top:none;border-radius: 5px 5px 0 0;}
+.am-panel-bd>.bg-select-color:last-child{border-radius:0 0  5px 5px ;}
+.bg-color{padding:7px 10px 7px 40px;border-top:1px solid #ebebeb;}
+.bg-select-color{background-color:#F3FAFF;padding:7px 10px 7px 40px;border-top:1px solid #ebebeb;}
+.am-radio input[type=radio], .am-radio-inline input[type=radio], .am-checkbox input[type=checkbox], .am-checkbox-inline input[type=checkbox]{margin-top:6px;}
+.intro{padding:0 10px;text-align: left;max-width:850px;margin:0 auto;}
+.intro blockquote{padding-right:15px;border:none;}
+.am-btn-block{width:95%;margin:0 auto;}
+.am-panel{padding:10px;border:none; background-color: #F7F7F7}
+.am-panel-secondary>.am-panel-hd{border:none;background-color:#F7F7F7;font-weight: bold; font-size:20px; color:#000;}
+.am-panel-bd{border: 1px solid #d5d5d5;
+border-radius: 5px;
+background-color: #FFF; padding:0;}
+.am-radio, .am-checkbox{ margin:0;}
+.am-radio+.am-radio, .am-checkbox+.am-checkbox{margin-top:0;}
+.my-table{font-size:14px;border:none;margin-left: -1px;margin-bottom: -1px;border-radius: 5px;}
+.my-table td{border-left:1px solid #ddd;border-bottom:1px solid #ddd;padding:3px;}
+
+.slct {
+	text-align: center;
+	width: 30px;
+	border:1px solid #CCC;
+	-webkit-appearance: none;
+	border-radius: 2px;
+	display: inline-block;
+	/* margin: 50px auto 0; 
+	padding: 5px 10px;*/
+	color: #000;
+	height: 20px;
+	line-height:20px;
+	font-size: 12px;
+	background: no-repeat right center #FFF;
+	background-size: 26px auto
+}
+.slct:focus {border-color:#3bb4f2;outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(14, 144, 210, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(14, 144, 210, 0.6);}
+.slct option {
+	text-align: center
+}
+.slct:after {
+	content: '';
+	display: block
+}
+
+@media only screen and (max-width: 640px){
+.login-div{width:80%;margin:0 auto;}
+.form-div{width:95%; margin:0 auto;}
+.list-div{width:95%; margin:0 auto;}
+.qnaire-eidtdiv{width:95%; margin:0 auto;}
+.a-style-div a{ display: block;}
+}
+
+
+/* Write your styles */
+[data-am-widget="tabs"] {
+    margin: 0px;
+}
+.am-list li{padding:0 !important;}
+.am-list-border li p{color:#999; margin:0; font-size:14px;}
+.am-list-border li .wjdate{color:#666; font-size:12px;}
+.am-list>li{margin-bottom:10px; background-color:transparent;}
+.history li{border:none;}
+.history li a{border: 1px solid #dedede; width:80%;float:right;}
+.history li .h_date{float:left; font-size:12px; margin-top:10px; width:15%; border-radius:0 10px 10px 0; line-height:20px; height:40px; background-color:#F93; color:#FFF; text-align:center;}
+.history:before{background: none repeat scroll 0 0 #999;
+    bottom: 0;
+    content: "";
+    left:10px;
+    position: absolute;
+    top: 0;
+    width: 5px;}
+.am-tabs-bd{border:none;}
+.pxjh{padding:10px;}
+.pxjh h3{ font-weight:normal; color:#0e90d2; margin-bottom:10px;}
+
+.history li .pxjh{border: 1px solid #dedede; width:80%;float:right;}
+.xq p{ border-bottom:1px solid #E2E2E4; padding:15px; margin:0;}
+.xq p span{ display:block; width:100px; font-weight:bold;}

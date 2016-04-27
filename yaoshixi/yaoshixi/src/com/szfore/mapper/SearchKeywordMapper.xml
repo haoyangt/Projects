@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.SearchKeywordMapper">
+ 	
+ 	<insert id="insertKeyword">
+ 		insert into search_keyword(kName,lastDate) values(#{kName},now())
+ 	</insert>
+ 	
+ 	<update id="updateKeywordCount">
+ 		update search_keyword set count = count+1,lastDate = now() where kId = #{kId}
+ 	</update>
+ 	
+ 	<select id="findKeyword" resultType="com.szfore.model.SearchKeyword">
+ 		select * from search_keyword where kName = #{kName}
+ 	</select>
+ 	
+</mapper> 

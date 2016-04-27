@@ -1,0 +1,11 @@
+﻿.vtip {position: absolute; padding: 10px; left: 5px; font-size: 0.8em; 
+		 background-color: white; border: 1px solid #a6c9e2; -moz-border-radius: 5px;
+		 -webkit-border-radius: 5px; z-index: 9999;}
+.vtip .vtipArrow {background:url('../img/vtip_arrow.png') repeat scroll 0 0 transparent;
+					border:0;width:21px;height:11px;position: absolute; top: -10px; left: 5px }
+.vError{border-width:1px !important;border-color:red !important;} 
+input.required, textarea.required {
+    background: url("../img/input_bg.png") no-repeat scroll transparent;
+    background-color:#F7F8FA;
+    background-position:100% 0;
+}

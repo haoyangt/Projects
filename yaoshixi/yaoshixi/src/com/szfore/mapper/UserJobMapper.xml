@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.UserJobMapper">
+ 	<insert id="insertUserJob">
+ 		insert into u_user_job
+ 		 (userId, jobId,diliverTime,answerOne,answerTwo,answerThree,answerFour,answerFive,terrace)
+ 	    values
+ 		 (#{userJob.userId},#{userJob.jobId},now(),#{userJob.answerOne},#{userJob.answerTwo},#{userJob.answerThree},#{userJob.answerFour},#{userJob.answerFive},#{userJob.terrace})
+ 	</insert>
+ 	
+ 	<select id="getUserJobOf" parameterType="com.szfore.plugin.Page" resultType="map">
+ 		SELECT
+ 			uj.userId, uj.jobId, uj.diliverTime, uj.status,
+ 			u.*,
+ 			j.jobName,j.companyId,i.status AS hire
+ 		FROM
+ 			u_user_job uj
+ 		INNER JOIN 
+ 			u_userbasicinfo u
+ 			ON u.userId = uj.userId
+ 		INNER JOIN
+ 			c_job j
+ 			ON j.id = uj.jobId 
+ 		LEFT JOIN c_intern i ON i.jobId=uj.jobId AND i.userId=u.userId 
+ 		where
+ 			uj.jobId in (${params.jobIds})
+ 			<if test="params.status != null">
+ 				and uj.status in (${params.status})
+ 			</if>
+ 	</select>
+ 	<select id="getUserJobByStatus" parameterType="com.szfore.plugin.Page" resultType="map">
+ 		SELECT
+ 			uj.jobId, uj.diliverTime, uj.status,
+ 			uj.answerOne,uj.answerTwo,uj.answerThree,uj.answerFour,uj.answerFive,
+ 			u.*,e.university,e.education,i.status AS hire,cr.content ,
+ 			j.jobName,j.companyId,j.interQuestionsOne,j.interQuestionsTwo,
+ 			j.interQuestionsThree,j.interQuestionsFour,j.interQuestionsFive 
+ 		FROM 
+			u_user_job uj
+ 		INNER JOIN 
+ 			u_userbasicinfo u
+ 			ON u.userId = uj.userId
+ 		INNER JOIN
+ 			c_job j
+ 			ON j.id = uj.jobId 
+ 		LEFT JOIN c_intern i ON i.jobId=uj.jobId AND i.userId=u.userId 
+ 		LEFT JOIN u_education_experience e ON e.userId=uj.userId and 
+			e.education=(
+			SELECT 
+				MAX(education) 
+			FROM 
+				u_education_experience 
+			WHERE userId=uj.userId )
+		left join c_relevance cr on cr.userId = uj.userId and cr.status=2 
+ 		where
+			uj.jobId =#{jobId}
+			<if test="status ==0 ">
+				and uj.status in (0,1,2,3) 
+			</if>
+			<if test="status !=0">
+				and uj.status = #{status} 
+			</if>
+			GROUP BY u.userId
+ 	</select>
+ 	
+ 	<select id="TalentJobByStatus" parameterType="com.szfore.plugin.Page" resultType="map">
+ 		SELECT
+ 			uj.jobId, uj.diliverTime, uj.status,
+ 			uj.answerOne,uj.answerTwo,uj.answerThree,uj.answerFour,uj.answerFive,
+ 			u.*,e.university,e.education,i.status AS hire,cr.content ,
+ 			j.jobName,j.companyId,j.interQuestionsOne,j.interQuestionsTwo,
+ 			j.interQuestionsThree,j.interQuestionsFour,j.interQuestionsFive 
+ 		FROM 
+			c_job j
+ 		INNER JOIN 
+			u_user_job uj
+ 			ON j.id = uj.jobId 
+ 		LEFT JOIN
+ 			u_userbasicinfo u
+ 			ON u.userId = uj.userId
+ 		LEFT JOIN c_intern i ON i.jobId=uj.jobId AND i.userId=u.userId 
+ 		LEFT JOIN u_education_experience e ON e.userId=uj.userId AND 
+			e.education=(
+			SELECT 
+				MAX(education) 
+			FROM 
+				u_education_experience 
+			WHERE userId=uj.userId )
+		LEFT JOIN c_relevance cr ON cr.userId = uj.userId AND cr.status=2 
+ 		WHERE
+			j.companyId=#{companyId} AND uj.status not in (4,7,8) 
+			GROUP BY uj.id
+ 	</select>
+ 	
+ 	<!-- 查找用户投递了哪些职位 -->
+ 	<select id="getUserJobs" resultType="map">
+ 		SELECT a.id,a.jobName,a.city,a.area,b.id AS companyId,b.companyName,
+				c.diliverTime,c.status,c.userId,e.status AS hire,f.content
+		FROM c_job a LEFT JOIN u_user_job c ON a.id = c.jobId 
+					LEFT JOIN c_company_info b ON a.companyId = b.id 
+					LEFT JOIN c_intern e ON e.userId = c.userId AND e.jobId=c.jobId
+					LEFT JOIN c_relevance f ON f.userId = c.userId AND f.companyId=a.companyId AND f.status = 1 
+		WHERE c.userId = #{userId} ORDER BY c.diliverTime DESC
+ 	</select>
+ 	
+ 	<select id="getDeliverJob" resultType="map">
+ 		SELECT b.id,b.jobName,b.publishTime,c.companyName,a.status FROM u_user_job a 
+ 			LEFT JOIN c_job b ON a.jobId=b.id 
+ 			LEFT JOIN c_company_info c ON c.id=b.companyId 
+ 		WHERE a.userId=#{userId}
+ 	</select>
+ 	
+ 	
+ 	<update id="updateStatusOf">
+ 		update
+ 			u_user_job a
+ 		set
+ 			a.status = #{status}
+ 		where
+ 			a.userId = #{userId}
+ 			and a.jobId = #{jobId}
+ 	</update>
+ 	
+ 	<update id="updateStatus">
+ 		update
+ 			u_user_job a
+ 		set
+ 			a.status = #{status}
+ 		where
+ 			a.jobId = #{jobId}
+ 	</update>
+ 	
+ 	<select id="getUserJobNumBy" resultType="int">
+ 		select
+ 			count(*) as userJobNum
+ 		from
+ 			u_user_job
+ 		where
+ 			userId = #{userId}
+ 			and jobId = #{jobId}
+ 	</select>
+ 	
+ 	<select id="searchUserBy" resultType="map">
+ 		select
+ 			u.userId, u.userName,
+ 			cj.jobName,
+ 			uj.jobId, uj.diliverTime
+ 		from
+ 			u_user_job uj
+ 		inner join
+ 			c_job cj
+ 			on uj.jobId = cj.id
+ 		inner join
+ 			u_userbasicinfo u
+ 			on u.userId = uj.userId
+ 		where
+ 			cj.companyId = #{companyId}
+ 			and u.userName = #{name}
+ 	</select>
+ 	
+ 	<select id="getUserJobCompanyBy" resultType="com.szfore.action.company.vo.CompanyJob">
+ 		SELECT 
+ 			j.jobName, j.publishTime 
+ 		FROM 
+ 			c_job j LEFT JOIN u_user_job u ON j.id = u.jobId 
+ 		WHERE 
+ 			u.userId = #{userId} AND j.companyId = #{companyId}
+ 		order by
+ 			j.publishTime desc
+ 	</select>
+ 	<select id="findUserJobByTime" resultType="map">
+ 		SELECT 
+ 			b.jobName,c.email 
+ 		FROM 
+ 			u_user_job a LEFT JOIN c_job b ON a.jobId=b.id 
+			LEFT JOIN u_userbasicinfo c ON  a.userId=c.userId 
+		WHERE 
+			TO_DAYS(NOW()) - TO_DAYS(a.diliverTime) &gt;= 5 AND a.status = 0 
+ 	</select>
+ 	<update id="updateStar">
+ 		update
+ 			u_user_job a
+ 		set
+ 			a.status = #{star}
+ 		where
+ 			TO_DAYS(NOW()) - TO_DAYS(a.diliverTime) &gt;= 5 and a.status=0
+ 	</update>
+ 	
+ 	<select id="findByUidJidStr" resultType="map">
+ 		select * from u_user_job a where a.userId=#{userId} and a.jobId=#{jobId} and a.status=#{status}
+ 	</select>
+ 	
+ 	<select id="getUjobConByJid" resultType="int">
+ 		select count(id) from u_user_job where jobId=#{jobId}
+ 	</select>
+ 	
+ 	<select id="findStatus" resultType="com.szfore.model.UserJob">
+ 		select * from u_user_job where userId=#{userId} and jobId=#{jobId}
+ 	</select>
+ 	
+ 	<select id="findByStatus" resultType="map">
+ 		select a.* from u_user_job a where a.status=#{status} and a.jobId=#{jobId}
+ 	</select>
+ 	<select id="getCountByJobId" resultType="map">
+ 		SELECT 
+			(SELECT COUNT(*) FROM u_user_job WHERE STATUS IN (0,1,2,3) AND jobId = #{jobId}) AS dcl,
+			(SELECT COUNT(*) FROM u_user_job WHERE STATUS=6 AND jobId = #{jobId}) AS zts,
+			(SELECT COUNT(*) FROM u_user_job WHERE STATUS=8 AND jobId = #{jobId}) AS tzms,
+			(SELECT COUNT(*) FROM u_user_job WHERE STATUS=7 AND jobId = #{jobId}) AS yly,
+			(SELECT COUNT(*) FROM u_user_job WHERE STATUS=4 AND jobId = #{jobId}) AS yjj,
+			(SELECT COUNT(*) FROM u_user_job WHERE STATUS=9 AND jobId = #{jobId}) AS bx,
+			(SELECT COUNT(*) FROM u_user_job WHERE STATUS=5 AND jobId = #{jobId}) AS wcl
+ 		FROM c_job WHERE id = #{jobId}
+ 	</select>
+</mapper> 

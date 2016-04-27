@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  - Application context definition for JPetStore's business layer.
+  - Contains bean references to the transaction manager and to the DAOs in
+  - dataAccessContext-local/jta.xml (see web.xml's "contextConfigLocation").
+  -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:flex="http://www.springframework.org/schema/flex"
+	xmlns:amq="http://activemq.apache.org/schema/core"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans                       
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/flex
+						   http://www.springframework.org/schema/flex/spring-flex-1.0.xsd
+                           http://www.springframework.org/schema/tx 
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+                           http://www.springframework.org/schema/aop 
+                           http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+                           http://activemq.apache.org/schema/core 
+                           http://activemq.apache.org/schema/core/activemq-core-5.2.0.xsd">
+                           
+     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+    	 <property name="driverClass">
+			<value>com.mysql.jdbc.Driver</value>
+		</property>
+		<property name="jdbcUrl">
+			 <value>jdbc:mysql://10.10.1.120:3306/yaoshixi?autoReconnect=true&amp;useUnicode=true&amp;characterEncoding=utf-8</value>
+		</property>
+		<property name="user">
+			<value>root</value>
+		</property>
+		<property name="password">
+			<value>root321</value>
+			<!-- <value>yxlADMINOfSzfore</value>-->
+		</property> 
+		
+	    <!-- 使用C3P0连接池 -->
+		<property name="idleConnectionTestPeriod" value="30"/>
+		<property name="initialPoolSize" value="10"/>
+		<property name="acquireIncrement" value="10" />  
+		<property name="maxIdleTime" value="160"/>
+		<property name="maxPoolSize" value="100"/>
+		<property name="minPoolSize" value="10"/>
+		<property name="maxStatements" value="0"/>
+	    <property name="acquireRetryAttempts" value="30"/><!--定义在从数据库获取新连接失败后重复尝试的次数。Default: 30 -->
+	    <property name="maxStatementsPerConnection" value="0" /><!--maxStatementsPerConnection定义了连接池内单个连接所拥有的最大缓存statements数。Default: 0 -->
+   	 </bean> 
+	              
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	    <property name="configLocation">
+			<value>classpath:SqlMapConfig.xml</value>
+		</property>
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	 <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.szfore.mapper"/>
+     </bean>
+     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean> 
+    <tx:annotation-driven transaction-manager="transactionManager"/> 
+</beans>

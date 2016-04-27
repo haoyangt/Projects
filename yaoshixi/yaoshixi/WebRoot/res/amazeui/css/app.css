@@ -1,0 +1,23 @@
+/* Write your styles */
+[data-am-widget="tabs"] {
+    margin: 0px;
+}
+.am-list li{padding:0 !important;}
+.am-list-border li p{color:#999; margin:0; font-size:14px;}
+.am-list-border li .wjdate{color:#666; font-size:12px;}
+.am-list>li{margin-bottom:10px; background-color:transparent;}
+.history li{border:none;}
+.history li a{border: 1px solid #dedede; width:80%;float:right;}
+.history li .h_date{width:20%;float:left; font-size:12px; margin-top:15px; width:15%; border-radius:0 10px 10px 0; line-height:20px; height:40px; background-color:#F93; color:#FFF; text-align:center;}
+.history:before{background: none repeat scroll 0 0 #999;
+    bottom: 0;
+    content: "";
+    left:10px;
+    position: absolute;
+    top: 0;
+    width: 5px;}
+.am-tabs-bd{border:none;}
+.pxjh{padding:10px;}
+.pxjh h3{ font-weight:normal; color:#0e90d2; margin-bottom:10px;}
+
+.history li .pxjh{border: 1px solid #dedede; width:80%;float:right;}

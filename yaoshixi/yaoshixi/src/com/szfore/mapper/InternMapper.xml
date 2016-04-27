@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.InternMapper">
+ 	<select id="listIntern" parameterType="com.szfore.plugin.Page" resultType="com.szfore.model.Intern">
+ 		select
+ 			i.userId, i.status, i.hireDate, i.leaveDate, i.commentStatus,
+ 			u.userName,
+ 			j.jobName
+ 		from
+ 			c_intern i
+ 		inner join
+ 			u_userbasicinfo u
+ 			on u.userId = i.userId
+ 		inner join
+ 			c_job j
+ 			on j.id = i.jobId
+ 		where
+ 			i.companyId = #{params.companyId}
+ 			<if test="params.status != null">
+ 				and i.status in (${params.status})
+ 			</if>
+ 	</select>
+ 	
+ 	<select id="findIntern" resultType="com.szfore.model.Intern">
+ 		select
+ 			i.userId, i.status, i.hireDate, i.leaveDate, i.commentStatus, i.content,
+ 			u.userName,
+ 			j.jobName
+ 		from
+ 			c_intern i
+ 		inner join
+ 			u_userbasicinfo u
+ 			on u.userId = i.userId
+ 		inner join
+ 			c_job j
+ 			on j.id = i.jobId
+ 		where
+ 			i.companyId = #{companyId}
+ 			and i.userId = #{userId}
+ 	</select>
+ 	
+ 	<select id="findAllInterns" resultType="map">
+ 		SELECT
+ 			i.userId, i.status, i.hireDate, i.leaveDate, i.commentStatus,
+ 			u.userName,
+ 			j.jobName,
+ 			c.companyName,
+ 			c.id As companyId
+ 		FROM
+ 			c_intern i
+ 		INNER JOIN
+ 			u_userbasicinfo u
+ 			ON u.userId = i.userId
+			AND u.userId = #{userId } 
+ 		INNER JOIN
+ 			c_job j
+ 			ON j.id = i.jobId
+ 		INNER JOIN 
+			c_company_info c
+			ON c.id = j.companyId
+ 	</select>
+ 	
+ 	<select id="findByStatus" resultType="map">
+ 		SELECT
+ 			i.id,i.userId, i.status, i.hireDate, i.leaveDate, i.commentStatus,
+ 			u.userName,
+ 			j.jobName,
+ 			c.companyName,
+ 			c.id AS companyId
+ 		FROM
+ 			c_intern i
+ 		INNER JOIN
+ 			u_userbasicinfo u
+ 			ON u.userId = i.userId
+			AND u.userId = #{userId }  
+ 		INNER JOIN
+ 			c_job j
+ 			ON j.id = i.jobId
+ 		INNER JOIN 
+			c_company_info c
+			ON c.id = j.companyId
+		WHERE i.commentStatus=#{commentStatus }
+ 	</select>
+ 	
+ 	<update id="saveEvaluationOf">
+ 		update
+ 			c_intern
+ 		set
+ 			content = #{content}, commentStatus = #{commentStatus}
+ 		where
+ 			userId = #{userId}
+ 			and companyId = #{companyId}
+ 	</update>
+ 	<insert id="saveInternAll">
+ 		insert into 
+ 			c_intern
+ 			(companyId,userId,status,hireDate,jobId,linkman,phone,officeAddress)
+ 			values
+ 			(#{in.companyId},#{in.userId},1,#{in.hireDate},#{in.jobId},#{in.linkman},#{in.phone},#{in.officeAddress})
+ 	</insert>
+ 	<select id="findEntry" resultType="map">
+ 		select * from c_intern where companyId=#{companyId} and userId=#{userId} and jobId=#{jobId} 
+ 	</select>
+ 	<select id="findE" resultType="map">
+ 		select * from c_intern where userId=#{userId} and jobId=#{jobId} 
+ 	</select>
+</mapper> 

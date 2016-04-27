@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.RecordChartMapper">
+		<select id="findUserCount" resultType="java.util.HashMap">
+			SELECT * 
+			FROM u_record_chart 
+			<if test="responseTime != '' and responseTime!=null">
+				where  responseTime = #{responseTime}
+			</if>
+			GROUP BY responseTime order by responseTime desc 
+		</select>
+	
+	<select id="findByTime" resultType="com.szfore.model.RecordChart">
+		select * from u_record_chart where responseTime = #{responseTime} 
+	</select>
+	
+	<insert id="insertRecordChart" keyProperty="recordChart.id" useGeneratedKeys="true">
+		INSERT INTO u_record_chart 
+				( 
+				responseTime, 
+				userLogin, 
+				newUsers, 
+				resumeSum, 
+				companyLogin, 
+				companyUser, 
+				employQuantity, 
+				newJobs, 
+				interview, 
+				refused,
+				userWeixinNum,
+				companyWeixinNum,
+				weixinResum,companyRegist
+		)VALUES(
+				#{recordChart.responseTime},
+				#{recordChart.userLogin},
+				#{recordChart.newUsers},
+				#{recordChart.resumeSum},
+				#{recordChart.companyLogin},
+				#{recordChart.companyUser},
+				#{recordChart.employQuantity}, 
+				#{recordChart.newJobs},
+				#{recordChart.interview},
+				#{recordChart.refused},
+				#{recordChart.userWeixinNum},
+				#{recordChart.companyWeixinNum},
+				#{recordChart.weixinResum},
+				#{recordChart.companyRegist}
+		);
+
+	</insert>
+	<update id="updateRecordChart">
+		update
+			u_record_chart
+		set 
+			<if test="recordChart.userLogin==1">
+				userLogin=userLogin+1
+			</if>
+			<if test="recordChart.newUsers==1">
+				newUsers=newUsers+1
+			</if>
+			<if test="recordChart.resumeSum==1">
+				resumeSum=resumeSum+1
+			</if>
+			<if test="recordChart.companyUser==1">
+				companyUser=companyUser+1
+			</if>
+			<if test="recordChart.companyLogin==1">
+				companyLogin=companyLogin+1
+			</if>
+			<if test="recordChart.employQuantity==1">
+				employQuantity=employQuantity+1
+			</if>
+			<if test="recordChart.newJobs==1">
+				newJobs=newJobs+1 
+			</if>
+			<if test="recordChart.interview==1">
+				interview=interview+1 
+			</if> 
+			<if test="recordChart.refused==1">
+				refused=refused+1 
+			</if>
+			<if test="recordChart.userWeixinNum==1">
+				userWeixinNum=userWeixinNum+1 
+			</if>
+			<if test="recordChart.companyWeixinNum==1">
+				companyWeixinNum=companyWeixinNum+1 
+			</if>
+			<if test="recordChart.companyRegist==1">
+				companyRegist = companyRegist+1 
+			</if>
+			<if test="recordChart.weixinResum==1">
+				weixinResum=weixinResum+1 
+			</if>
+		where 
+			responseTime = #{responseTime}
+	</update>
+</mapper>

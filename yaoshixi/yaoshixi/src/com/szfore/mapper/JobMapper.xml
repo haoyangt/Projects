@@ -1,0 +1,548 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.JobMapper">
+ 	<insert id="insertJob">
+ 		insert into c_job
+	 		(companyId,jobName,belongDeptName,workCity,dayMoney,workTime,abilityRequest,educationRequest,gradeRequest,
+	 		jobDesc,publishTime,jobRequest,address,mark,temptation)
+ 		values 
+	 		(#{job.companyId},#{job.jobName},#{job.belongDeptName},#{job.workCity},
+	 		 #{job.dayMoney},#{job.workTime},#{job.abilityRequest},#{job.educationRequest},#{job.gradeRequest},
+	 		#{job.jobDesc},#{job.publishTime},#{job.jobRequest},#{job.address},#{job.mark},#{job.temptation})
+ 	</insert>
+ 	
+ 	<update id="deleteByTime">
+ 		update c_job a set a.status=2 where TO_DAYS(now()) - TO_DAYS(a.publishTime) &gt;= 10 and a.status=1 
+ 	</update>
+ 	<select id="findByTime" resultType="map">
+ 		SELECT 
+ 			a.jobName,b.companyName,b.email,a.companyId 
+ 		FROM 
+ 			c_job a LEFT JOIN c_company_info b ON a.companyId=b.id 
+		WHERE 
+			TO_DAYS(NOW()) - TO_DAYS(a.publishTime) &gt;= 10 AND a.status=1
+ 	</select>
+ 	<select id="findAllJobs" resultType="map">
+ 		SELECT
+		  a.*,
+		  b.companyName,b.companyShortName,b.companyLogo,b.email,b.nature,b.filedes,b.scale,b.homePage,
+		  c.tag as tags
+		FROM c_job a
+		  INNER JOIN c_company_info b
+		    ON a.companyId = b.id 
+		    <if test="ids != '' ">
+			    and a.id in (#{ids})
+		    </if>
+		  LEFT JOIN (SELECT
+		               companyId,
+		               GROUP_CONCAT(tagName) AS tag
+		             FROM c_tag_company
+		             GROUP BY companyId) c
+		    ON a.companyId = c.companyId WHERE a.status = 1  order by a.publishTime DESC
+    
+ 	</select>
+ 	
+ 	<select id="findJobsById" resultType="map">
+ 		SELECT
+		  a.*,b.phone,
+		  b.companyName,b.companyShortName,b.companyLogo,b.email,b.nature,b.filedes,b.scale,b.homePage,b.authentication,
+		  c.tag AS tags
+		FROM c_job a left join c_company_info b on a.companyId = b.id  
+     LEFT JOIN 
+			(SELECT companyId,GROUP_CONCAT(tagName) AS tag FROM c_tag_company
+        GROUP BY companyId) c on a.companyId = c.companyId where a.id=#{jobId}
+ 	</select>
+ 	
+ 	<!-- 干嘛两个插入方法  下面这个去掉  不知道会不会出现位置错误 -->
+ 	 <insert id="save" keyProperty="job.id" useGeneratedKeys="true">
+ 		insert into
+ 			c_job(companyId, category, jobDesc, publishTime, jobRequest, mark, educationalReq, 
+ 			otherReq, payment, city, workTime,workTimeInterval,temptation,area,employ,jobName,jobType,postJob,
+ 			interQuestionsOne,interQuestionsTwo,interQuestionsThree,interQuestionsFour,interQuestionsFive,dacategory)
+ 		values
+ 			(#{job.companyId},#{job.category} , #{job.jobDesc}, 
+ 			#{job.publishTime}, #{job.jobRequest}, #{job.mark}, 
+ 			#{job.educationalReq}, #{job.otherReq}, #{job.payment},
+ 			#{job.city}, #{job.workTime},#{job.workTimeInterval},
+ 			#{job.temptation},#{job.area},#{job.employ},#{job.jobName},#{job.jobType},#{job.postJob},
+ 			#{job.interQuestionsOne},#{job.interQuestionsTwo},#{job.interQuestionsThree},
+ 			#{job.interQuestionsFour},#{job.interQuestionsFive},#{job.dacategory})
+ 	</insert>
+ 	<!-- excel导入添加工作信息 -->
+ 	<insert id="saveExcel" keyProperty="job.id" useGeneratedKeys="true">
+ 		insert into
+ 			c_job(companyId, jobName, jobDesc,workTime,payment,educationalReq,otherReq,
+ 			 publishTime, status,city,jobRequest,temptation,employ,area,category)
+ 		values
+ 			(#{job.companyId}, #{job.jobName}, #{job.jobDesc},#{job.workTime}, #{job.payment},
+ 			#{job.educationalReq}, #{job.otherReq}, #{job.publishTime}, #{job.status},
+ 			#{job.city},#{job.jobRequest},#{job.temptation},#{job.employ},#{job.area},#{job.category})
+ 	</insert>
+ 	<select id="list" resultType="com.szfore.action.company.vo.CompanyJob">
+ 		select 
+ 			j.*,count(uj.id) as receivedResumeNum
+ 		from
+ 			c_job j left join u_user_job uj on uj.jobId = j.id
+ 		where 
+ 			j.companyId = #{companyId} and j.status = #{status}
+ 		group by j.id
+ 		order by j.publishTime desc
+ 	</select>
+ 	
+ 	<select id="listPhone" resultType="com.szfore.action.company.vo.CompanyJob">
+ 		select 
+ 			j.*,count(uj.id) as receivedResumeNum
+ 		from
+ 			c_job j left join u_user_job uj on uj.jobId = j.id
+ 		where 
+ 			j.companyId = #{companyId} 
+ 		group by j.id
+ 		order by j.publishTime desc
+ 	</select>
+ 	<select id="findCompanyByJid" resultType="map"> 
+ 		select a.jobName,b.companyName,a.companyId  
+ 		from c_job a , c_company_info b 
+ 		where a.companyId = b.id and a.id=#{jobId}
+ 	</select>
+ 	<select id="listBySize" resultType="com.szfore.action.company.vo.CompanyJob">
+ 		select 
+ 			j.id, j.jobName, j.publishTime, j.city, j.educationalReq, j.payment, j.status,
+ 			count(uj.id) as receivedResumeNum
+ 		from
+ 			c_job j
+ 		left join
+ 			u_user_job uj
+ 			on uj.jobId = j.id
+ 		where 
+ 			j.companyId = #{companyId}
+ 			and j.status = #{status}
+ 		group by 
+ 			j.id
+ 		order by
+ 			j.publishTime desc
+ 		limit 0,#{size}
+ 	</select>
+ 	
+ 	<!-- 查找企业用户收到的简历信息 -->
+ 	<select id="findReceiveResumeMsg" resultType="map">
+ 		SELECT a.userId,b.id,b.jobName,d.userName,d.userId as uId,c.diliverTime,d.email
+ 			FROM c_company_info a INNER JOIN c_job b ON a.id = b.companyId 
+			INNER JOIN u_user_job c ON b.id = c.jobId 
+			INNER JOIN u_userbasicinfo d ON c.userId = d.userId 
+			WHERE a.userId=#{userId} and c.status=0
+ 	</select>
+ 	
+ 	<select id="getJobIdsOf" resultType="int">
+ 		select
+ 			id
+ 		from
+ 			c_job
+ 		where
+ 			companyId = #{companyId}
+ 		order by
+ 			publishTime desc
+ 	</select>
+ 	
+ 	<select id="getJobOf" resultType="com.szfore.model.Job">
+ 		select
+ 			* 
+ 		from
+ 			c_job
+ 		where
+ 			id = #{jobId}
+ 	</select>
+ 	
+ 	<update id="modify">
+ 		update
+ 			c_job
+ 		set
+ 			jobName = #{job.jobName},
+ 			city = #{job.city},
+ 			area=#{job.area},
+ 			workTime = #{job.workTime},
+ 			educationalReq = #{job.educationalReq},
+ 			otherReq = #{job.otherReq},
+	 		jobDesc = #{job.jobDesc},
+	 		jobRequest = #{job.jobRequest},
+	 		publishTime=#{job.publishTime},
+	 		status=#{job.status},
+	 		temptation=#{job.temptation},
+	 		payment=#{job.payment},
+	 		category=#{job.category},
+	 		jobType=#{jobType},
+	 		interQuestionsOne=#{job.interQuestionsOne},
+	 		interQuestionsTwo=#{job.interQuestionsTwo},
+	 		interQuestionsThree=#{job.interQuestionsThree},
+	 		interQuestionsFour=#{job.interQuestionsFour},
+	 		interQuestionsFive=#{job.interQuestionsFive}
+ 		where
+ 			id = #{job.id}
+ 			and companyId = #{job.companyId}
+ 	</update>
+ 	
+ 	<update id="modifyStatusOf">
+ 		update
+ 			c_job
+ 		set
+ 			status = #{status}
+ 		where
+ 			id = #{jobId}
+ 			and companyId = #{companyId}
+ 	</update>
+ 	
+ 	<select id="getJobNumBy" resultType="int">
+ 		select
+ 			count(*) as jobNum
+ 		from
+ 			c_job
+ 		where
+ 			id = #{jobId}
+ 			and companyId = #{companyId}
+ 	</select>
+ 	
+ 	<delete id="delete">
+ 		delete from
+ 			c_job
+ 		where
+ 			id = #{jobId}
+ 			and companyId = #{companyId}
+ 	</delete>
+ 	
+ 	<select id="getJobByCid" resultType="com.szfore.model.Job">
+ 		select * from c_job where status=1 and companyId = #{companyId} order by publishTime desc 
+ 	</select>
+ 	
+ 	<select id="getJobByTerm" resultType="com.szfore.model.Job">
+ 		select * from c_job where status=1 
+ 		<if test="jobName != null and jobName != '' and jobName != 'null'">
+ 		 and (jobName like '%' #{jobName} '%' or companyId in 
+ 		 (select id from c_company_info where companyShortName like '%' #{jobName} '%') 
+ 		 or category like '%' #{jobName} '%') 
+ 		 </if>
+		<if test="xueli != '' and xueli != null and xueli != 'null'">
+			and educationalReq &gt;= #{xueli} 
+		</if>
+		<if test="jobCategory != '' and jobCategory != null and jobCategory != 'null'">
+			and workTime = #{jobCategory} 
+		</if>
+		<if test="releaseTime != '' and releaseTime != null and releaseTime != 'null'">
+			and TO_DAYS(now()) - TO_DAYS(publishTime) &lt;= #{releaseTime}  
+		</if>
+		<if test="scope != '' and scope != null and scope != 'null'">
+			and payment = #{scope} 	
+		</if>
+		<if test="attrValue != '' and attrValue != null and attrValue != 'null'">
+			and category in (${attrValue})
+		</if>
+		<if test="areaValue != '' and areaValue != null and areaValue != 'null'">
+			and area in (${areaValue})
+		</if>
+		order by publishTime desc 
+ 	</select>
+ 	
+ 	<!-- wlq新增 -->
+ 	<select id="getJobByLocationForWx" resultType="com.szfore.model.Job">
+ 		select * from c_job where status=1 and jobName like concat('%', #{jobName}, '%') 
+		<if test="city != '' and city != null and city != 'null'">
+			and city = #{city} 
+		</if>
+		<if test="area != '' and area != null and area != 'null'">
+			and area = #{area} 
+		</if>
+		<if test="xueli != '' and xueli != null and xueli != 'null'">
+			and educationalReq &gt;= #{xueli} 
+		</if>
+		<if test="jobCategory != '' and jobCategory != null and jobCategory != 'null'">
+			and workTime = #{jobCategory} 
+		</if>
+		<if test="releaseTime != '' and releaseTime != null and releaseTime != 'null'">
+			and TO_DAYS(now()) - TO_DAYS(publishTime) &lt;= #{releaseTime}  
+		</if>
+		<if test="scope != '' and scope != null and scope != 'null'">
+			and payment = #{scope} 	
+		</if>
+		<if test="josAttrList != '' and josAttrList != null and josAttrList != 'null'">
+			and category in 
+			<foreach collection="josAttrList" separator="," open="(" close=")" item="item">
+				#{item}
+			</foreach>
+		</if>
+		order by publishTime desc 
+ 	</select>
+ 	<!-- 微信端获取热门职位 -->
+ 	<select id="getPopularJobsForWx" resultType="map">
+ 		SELECT 
+ 			* 
+ 		FROM 
+ 			c_job 
+ 		WHERE 
+ 			status=1 
+	 		<if test="userId != null and userId != '' and userId != 'null'">
+	 			AND id NOT IN (SELECT jobId FROM u_user_job WHERE userId=#{userId}) 
+	 		</if>
+ 		ORDER BY pageView DESC
+ 	</select>
+ 	
+ 	<select id="getJobsRecommend" resultType="com.szfore.model.Job">
+ 		select * from c_job  where status=1 
+ 		<if test="city != null and city != '' ">
+ 			and city = #{city}   
+ 		</if>
+ 		<if test="educationalReq != null and educationalReq != ''">
+ 			and educationalReq &lt;= #{educationalReq} 
+ 		</if>
+ 		 	order by publishTime desc 
+ 	</select>
+ 	
+ 	<select id="getJobsRed" resultType="com.szfore.model.Job">
+ 		select * from c_job  where status=1 
+ 		<if test="userBasicInfo.jobCity != null and userBasicInfo.jobCity != '' ">
+ 			and city = #{userBasicInfo.jobCity}   
+ 		</if>
+ 		<if test="userBasicInfo.jobCategory != null and userBasicInfo.jobCategory != ''">
+ 			and workTime = #{userBasicInfo.jobCategory} 
+ 		</if> 
+ 		<if test="kyes != null and kyes !=''">
+ 			and category in (${kyes})
+ 		</if>	
+ 		 	order by publishTime desc 
+ 	</select>
+ 	
+ 	<select id="getJobsRedSan" resultType="com.szfore.model.Job">
+ 		select * from c_job where status=1 
+ 		<if test="userBasicInfo.jobCity != null and userBasicInfo.jobCity != '' ">
+ 			and city = #{userBasicInfo.jobCity}   
+ 		</if>
+ 		<if test="userBasicInfo.jobCategory != null and userBasicInfo.jobCategory != ''">
+ 			and workTime = #{userBasicInfo.jobCategory}  
+ 		</if> 
+ 		<if test="kyes != null and kyes !=''">
+ 			and category in (${kyes}) 
+ 		</if>	
+ 		 	order by publishTime desc LIMIT 0,3 
+ 	</select>
+ 	
+ 	<select id="getJobsRedSanPhone" resultType="map">
+ 		select a.*,b.companyLogo,b.addr,
+			b.companyShortName from c_job a left join c_company_info b on a.companyId = b.id where status=1 
+ 		<if test="userBasicInfo.jobCity != null and userBasicInfo.jobCity != '' ">
+ 			and a.city = #{userBasicInfo.jobCity}   
+ 		</if>
+ 		<if test="userBasicInfo.jobCategory != null and userBasicInfo.jobCategory != ''">
+ 			and a.workTime = #{userBasicInfo.jobCategory}  
+ 		</if> 
+ 		<if test="kyes != null and kyes !=''">
+ 			and a.category in (${kyes}) 
+ 		</if>	
+ 		 	order by a.publishTime desc LIMIT 0,3 
+ 	</select>
+ 	
+ 	<select id="getNewestJob" resultType="map">
+ 		select a.*,b.* from c_job a left join c_company_info b on a.companyId=b.id 
+ 		order by a.publishTime desc,b.famous Asc LIMIT 0,#{num} 
+ 	</select>
+ 	
+ 	<select id="getJobByTime" resultType="map">
+ 		SELECT 
+ 			a.publishTime,b.city,b.companyName,b.companyDesc,b.phone,b.email,
+ 			a.jobName,a.id,b.cdkey,b.cdkeyStatus,a.pageView 
+		FROM 
+			c_job a LEFT JOIN c_company_info b ON a.companyId = b.id 
+			WHERE a.jobName like '%%' 
+		<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+			and Date(a.publishTime) &gt;= #{startTime} AND Date(a.publishTime) &lt;= #{endTime}
+		</if>
+		<if test="companyName !=null and companyName!=''">
+			and b.companyName like '%' #{companyName} '%' 
+		</if>	 
+		GROUP BY a.id ORDER BY a.publishTime DESC
+ 	</select>
+ 	
+ 	<select id="getJobByTimeExcel" resultType="map">
+ 		SELECT 
+ 			a.publishTime,b.city,b.companyName,b.companyDesc,b.phone,b.email,
+ 			a.jobName,a.id,b.cdkey,b.cdkeyStatus,a.pageView 
+		FROM 
+			c_job a LEFT JOIN c_company_info b ON a.companyId = b.id 
+		<if test="startTime != null and startTime != '' and endTime != null and endTime != ''">
+			WHERE 
+				Date(a.publishTime) &gt;= #{startTime} AND Date(a.publishTime) &lt;= #{endTime}
+		</if>	 
+		GROUP BY a.id ORDER BY a.publishTime DESC
+ 	</select>
+ 	
+ 	<update id="updatePageView">
+ 		UPDATE 
+ 			c_job 
+		SET
+			pageView = pageView+1
+		WHERE
+			id = #{jobId} 
+ 	</update>
+ 	
+ 	<update id="updateSharetimes">
+ 		UPDATE 
+ 			c_job 
+		SET
+			sharetimes = sharetimes+1
+		WHERE
+			id = #{jobId} 
+ 	</update>
+ 	
+ 	<select id="findHotJobsSan" resultType="com.szfore.model.Job">
+ 		SELECT 
+ 			a.* 
+ 		FROM 
+ 			c_job a
+ 		WHERE 
+ 			 a.status=1 
+	 		<if test="userId != null">
+	 			AND a.id NOT IN (SELECT jobId FROM u_user_job WHERE userId=#{userId}) 
+	 		</if>
+ 		ORDER BY a.pageView DESC LIMIT 0,3 
+ 	</select>
+ 	
+ 	<select id="findHotJobs" resultType="com.szfore.model.Job">
+ 		SELECT 
+ 			a.* 
+ 		FROM 
+ 			c_job a
+ 		WHERE 
+ 			 a.status=1 
+	 		<if test="userId != null and userId != ''">
+	 			AND a.id NOT IN (SELECT jobId FROM u_user_job WHERE userId=#{userId}) 
+	 		</if>
+ 		ORDER BY a.pageView DESC 
+ 	</select>
+ 	
+ 	<select id="findHotJobsSanPhone" resultType="map">
+ 		SELECT 
+ 			a.*,b.companyLogo,b.addr,
+			b.companyShortName
+ 		FROM 
+ 			c_job a ,c_company_info b 
+ 		WHERE 
+ 			a.companyId=b.id AND a.status=1 
+	 		<if test="userId != null and userId != '' and userId != 0">
+	 			AND a.id NOT IN (SELECT jobId FROM u_user_job WHERE userId=#{userId}) 
+	 		</if>
+ 		ORDER BY a.pageView DESC LIMIT 0,3 
+ 	</select>
+ 	
+ 	<select id="findAllJobsSanPhone" resultType="map">
+ 		SELECT 
+ 			a.*,b.companyLogo,b.addr,
+			b.companyShortName
+ 		FROM 
+ 			c_job a ,c_company_info b 
+ 		WHERE 
+ 			a.companyId=b.id AND a.status=1 
+	 		<if test="userId != null and userId != '' and userId != 0">
+	 			AND a.id NOT IN (SELECT jobId FROM u_user_job WHERE userId=#{userId}) 
+	 		</if>
+ 		ORDER BY a.publishTime DESC LIMIT 0,3 
+ 	</select>
+ 	
+ 	<select id="findAllJobsPhone" resultType="map">
+ 		SELECT 
+ 			a.*,b.companyLogo,b.addr,
+			b.companyName
+ 		FROM 
+ 			c_job a ,c_company_info b 
+ 		WHERE 
+ 			a.companyId=b.id AND a.status=1 
+	 		<if test="userId != null and userId != '' and userId != 0">
+	 			AND a.id NOT IN (SELECT jobId FROM u_user_job WHERE userId=#{userId}) 
+	 		</if>
+	 		<if test="CjName != null and CjName != '' and CjName != 'null'">
+	 			and (a.jobName like '%' #{CjName} '%' or a.companyId in 
+	 			(select id from c_company_info where companyShortName like '%' #{CjName} '%') ) 
+	 		</if>
+	 		<if test="city != '' and city != null">
+			and a.city = #{city} 
+		</if>
+		<if test="xueli != '' and xueli != null">
+			and a.educationalReq &gt;= #{xueli} 
+		</if>
+		<if test="jobCategory != '' and jobCategory != null">
+			and a.workTime = #{jobCategory} 
+		</if>
+		<if test="releaseTime != '' and releaseTime != null">
+			and TO_DAYS(now()) - TO_DAYS(a.publishTime) &lt;= #{releaseTime}  
+		</if>
+		<if test="scope != '' and scope != null">
+			and a.payment = #{scope} 	
+		</if>
+ 		order by a.publishTime desc,b.famous Asc LIMIT 0,#{num}  
+ 	</select>
+ 	
+ 	
+ 	<select id="findhotJobsPhone" resultType="map">
+ 		SELECT 
+ 			a.*,b.companyLogo,b.addr,
+			b.companyShortName
+ 		FROM 
+ 			c_job a ,c_company_info b 
+ 		WHERE 
+ 			a.companyId=b.id AND a.status=1 
+	 		<if test="userId != null and userId != '' and userId != 0">
+	 			AND a.id NOT IN (SELECT jobId FROM u_user_job WHERE userId=#{userId}) 
+	 		</if>
+	 		<if test="CjName != null and CjName != '' and CjName != 'null'">
+	 			and (a.jobName like '%' #{CjName} '%' or a.companyId in 
+	 			(select id from c_company_info where companyShortName like '%' #{CjName} '%') ) 
+	 		</if>
+	 		<if test="city != '' and city != null">
+			and a.city = #{city} 
+		</if>
+		<if test="xueli != '' and xueli != null">
+			and a.educationalReq &gt;= #{xueli} 
+		</if>
+		<if test="jobCategory != '' and jobCategory != null">
+			and a.workTime = #{jobCategory} 
+		</if>
+		<if test="releaseTime != '' and releaseTime != null">
+			and TO_DAYS(now()) - TO_DAYS(a.publishTime) &lt;= #{releaseTime}  
+		</if>
+		<if test="scope != '' and scope != null">
+			and a.payment = #{scope} 	
+		</if>
+ 		order by a.pageView desc,b.famous Asc LIMIT 0,#{num}  
+ 	</select>
+ 	
+ 	<select id="findResumeUnprocessed" resultType="map">
+ 		SELECT 
+ 			c.companyName,c.email,COUNT(a.id) As num,c.cdkey 
+		FROM 
+			u_user_job a LEFT JOIN c_job b ON a.jobId=b.id 
+			LEFT JOIN c_company_info c ON b.companyId=c.id 
+		WHERE 
+			a.status=0 GROUP BY c.id 
+ 	</select>
+ 	
+ 	<select id="findJobDetails" resultType="map">
+ 		SELECT a.id,a.jobName,a.pageView,COUNT(c.jobId) As jobCont,b.email FROM c_job a 
+			LEFT JOIN c_company_info b ON a.companyId=b.id 
+			LEFT JOIN u_user_job c ON a.id=c.jobId 
+			WHERE a.status=1 AND c.status &lt; 4
+			GROUP BY c.jobId
+ 	</select>
+ 	
+ 	<select id="findAllJobNum" resultType="java.lang.Integer">
+ 		SELECT COUNT(id) FROM c_job where status = 1
+ 	</select>
+ 	
+ 	<select id="findJobByCid" resultType="com.szfore.model.Job">
+ 		SELECT * FROM c_job WHERE companyId=#{companyId} AND id=#{id}
+ 	</select>
+ 	
+ 	<select id="findJobReunm" resultType="map">
+ 		SELECT a.id,a.jobName,a.status,b.companyName,COUNT(c.id) AS reunmCon FROM c_job a 
+			LEFT JOIN c_company_info b ON a.companyId=b.id 
+			LEFT JOIN u_user_job c ON a.id=c.jobId 
+			WHERE b.userId = #{userId} GROUP BY c.jobId ORDER BY a.publishTime DESC
+ 	</select>
+</mapper> 

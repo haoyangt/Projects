@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.VocationalSkillsMapper">
+	<insert id="insertVocational" keyProperty="vocationalSkills.id" useGeneratedKeys="true">
+		insert into
+ 			u_vocational_skills(
+ 			language,
+ 			hearOf,
+ 			readWrite,
+ 			grade,
+ 			score,
+ 			userId
+ 		)values(
+ 			#{vocationalSkills.language},
+ 			#{vocationalSkills.hearOf},
+ 			#{vocationalSkills.readWrite},
+ 			#{vocationalSkills.grade},
+ 			#{vocationalSkills.score},
+ 			#{vocationalSkills.userId}
+ 		)
+	</insert>
+
+	<select id="findByUserId" resultType="map">
+		select * from u_vocational_skills where userId=#{userId} 
+	</select>
+	<select id="findByUid" resultType="map">
+		select * from u_vocational_skills where userId=#{userId} 
+	</select>
+	
+	<update id="updateById">
+		UPDATE 
+			u_vocational_skills 
+		SET
+			<if test="vocationalSkills.language != '' and vocationalSkills.language != null">
+				language = #{vocationalSkills.language}, 
+			</if>
+			<if test="vocationalSkills.hearOf != '' and vocationalSkills.hearOf != null">
+				hearOf = #{vocationalSkills.hearOf},
+			</if>
+			<if test="vocationalSkills.readWrite != '' and vocationalSkills.readWrite != null"> 
+				readWrite = #{vocationalSkills.readWrite} , 
+			</if>
+			<if test="vocationalSkills.grade != '' and vocationalSkills.grade != null">
+				grade = #{vocationalSkills.grade}, 
+			</if>
+			<if test="vocationalSkills.score != '' and vocationalSkills.score != null">
+				score = #{vocationalSkills.score} , 
+			</if>
+			userId = #{vocationalSkills.userId}
+		WHERE
+			id = #{vocationalSkills.id} 
+	</update>
+	<delete id="deleteById">
+		DELETE FROM u_vocational_skills WHERE id = #{id} ;
+	</delete>
+</mapper>

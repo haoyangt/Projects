@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+			http://www.springframework.org/schema/context 
+			http://www.springframework.org/schema/context/spring-context-3.2.xsd
+			http://www.springframework.org/schema/mvc
+			http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd"> 
+ 	<context:component-scan base-package="com.szfore.action" /> 
+	
+	<bean 
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="customArgumentResolvers">
+			<list>
+				<ref bean="sessionValueResolver"/>
+				<ref bean="beanArgumentResolver"/>
+				<bean class="com.szfore.plugin.mvc.FileArgumentResolver"/>
+			</list>
+		</property>
+		<property name="order" value="1"></property>
+		<!-- 配置 action中使用responseBody返回内容时使用 utf-8编码 -->
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="org.springframework.http.converter.StringHttpMessageConverter">
+					<property name="supportedMediaTypes">
+						<list>
+							<value>text/html;charset=UTF-8</value>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+	</bean>
+	
+	<bean
+		class="com.szfore.plugin.mvc.FileViewResolver">
+		<property name="order" value="1" />
+	</bean>
+	
+	
+	<bean
+		class="com.szfore.plugin.mvc.ExcelViewResolver">
+		<property name="order" value="2" />
+	</bean>
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/company/**"/>
+			<mvc:exclude-mapping path="/company/add"/>
+			<mvc:exclude-mapping path="/company/uploadLogo"/>
+			<mvc:exclude-mapping path="/company/resume/jobResumeOnWx/*/*"/>
+			<mvc:exclude-mapping path="/company/resume/listOnWx/*/*"/>
+			<mvc:exclude-mapping path="/company/job/indexOnWx/*"/>
+			<mvc:exclude-mapping path="/company/job/listOnWx/*"/>
+			<mvc:exclude-mapping path="/company/resume/interviewOnWx/*/*/*"/>
+			<mvc:exclude-mapping path="/company/resume/printOnWx/*/*"/>
+			<mvc:exclude-mapping path="/company/resume/emailResumeToHrOnWx/*"/>
+			<mvc:exclude-mapping path="/company/resume/contractOnWx/*/*/*/*"/>
+			<mvc:exclude-mapping path="/company/commentUserOnWx/*/*/*"/>
+			<mvc:exclude-mapping path="/company/resume/turnDownOnWx/*/*/*"/>
+			<mvc:exclude-mapping path="/company/job/iReleasedPosition/*"/>
+			<mvc:exclude-mapping path="/company/resume/inteWeixYaoQing/*/*"/>
+			<mvc:exclude-mapping path="/company/uploadLicense"/>
+			<mvc:exclude-mapping path="/company/SubmitReviewes"/>
+			<mvc:exclude-mapping path="/company/job/addJobWeixinCom/*"/>
+			<mvc:exclude-mapping path="/company/job/addJobWeixin/*"/>
+			
+			<bean class="com.szfore.action.interceptor.CompanyActionInterceptor"/>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/admin/**"/>
+			<bean class="com.szfore.action.interceptor.AdminActionInterceptor"></bean>
+		</mvc:interceptor>
+		<mvc:interceptor>
+		<mvc:mapping path="/user/**"/>
+			<mvc:exclude-mapping path="/user/regist"/>
+			<mvc:exclude-mapping path="/user/registPhone"/>
+			<mvc:exclude-mapping path="/user/companyRegist"/>
+			<mvc:exclude-mapping path="/user/genEmail/**"/>
+			<mvc:exclude-mapping path="/user/validateEmail"/>
+			<mvc:exclude-mapping path="/user/activeEmail"/>
+			<mvc:exclude-mapping path="/user/loginout"/>
+			<mvc:exclude-mapping path="/user/genEmailRegist/**"/>
+			<mvc:exclude-mapping path="/user/genEmailRegist"/>
+			<mvc:exclude-mapping path="/user/diliverResume"/>
+			<mvc:exclude-mapping path="/user/addReply"/>
+			<mvc:exclude-mapping path="/user/resendEmail/**"/>
+			<mvc:exclude-mapping path="/user/getHeadPhoto/**"/>	
+			<mvc:exclude-mapping path="/user/interviewNoticeByWx/**"/>
+			<mvc:exclude-mapping path="/user/diliverResumeByWxSend"/>
+			<mvc:exclude-mapping path="/user/wxLoginFor"/>
+			<mvc:exclude-mapping path="/user/wxLogin"/>
+			<mvc:exclude-mapping path="/user/loginFind/*"/>
+			<mvc:exclude-mapping path="/user/jobIntensionWx/*"/>
+			<mvc:exclude-mapping path="/user/resumeWx/**"/>
+			<mvc:exclude-mapping path="/user/flashHire/**/**"/> 
+			<mvc:exclude-mapping path="/user/saveResumeWx/**"/>
+			<mvc:exclude-mapping path="/user/resumeWxWei/*"/>
+			<mvc:exclude-mapping path="/user/previewOnWx/*/*/*/*/*"/>
+			<mvc:exclude-mapping path="/user/examineOnWx/*/*/*/*/*"/>
+			<mvc:exclude-mapping path="/user/jobDetailWeix/*"/>
+			<mvc:exclude-mapping path="/user/jobDetailWeixYl/*/*"/>
+			<mvc:exclude-mapping path="/user/findUserWeixinById/**"/>
+			<mvc:exclude-mapping path="/user/receivedResume/**"/>
+			<mvc:exclude-mapping path="/user/findUserDestById/*/*"/>
+			<mvc:exclude-mapping path="/user/deliveryResumeWxWjl/*"/>
+			<mvc:exclude-mapping path="/user/findXiansById/*"/>
+			<bean class="com.szfore.action.interceptor.UserActionInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<!-- 文件上传支持-->
+	<!-- <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver">
+		20M  
+       <property name="maxUploadSize" value="40960000"/>         
+        resolveLazily属性启用是为了推迟文件解析，以便在UploadAction 中捕获文件大小异常  
+        <property name="resolveLazily" value="true"/> 
+	</bean> -->
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		 <property name="maxUploadSize" value="1024000000" /> 
+		 <property name="resolveLazily" value="true" />
+		 <property name="maxInMemorySize" value="4096" /> 
+	</bean>
+	
+</beans>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.TagUserMapper">
+ 	
+ 	<insert id="insertTagUser">
+ 		insert into u_tag_user (userId,tagName,mark)
+ 		values 
+ 		(#{tagUser.userId},#{tagUser.tagName},#{tagUser.mark})
+ 	</insert>
+ 	
+ 	<delete id="deltagUser">
+ 		DELETE FROM u_tag_user WHERE userId = #{tagUser.userId} and tagName=#{tagUser.tagName}
+ 	</delete>
+ 	<delete id="deleteTagUserById">
+ 		delete from u_tag_user where id = #{id}
+ 	</delete>
+ 	
+ 	<select id="findTagUser" resultType="com.szfore.model.TagUser">
+ 		SELECT * FROM u_tag_user where userId = #{userId}
+ 	</select>
+</mapper> 

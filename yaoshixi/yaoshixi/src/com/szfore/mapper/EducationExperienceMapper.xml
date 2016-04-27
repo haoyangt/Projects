@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+    <!DOCTYPE mapper 
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.szfore.mapper.EducationExperienceMapper">
+
+	<insert id="AddEducationExperience" keyProperty="educationExperience.id" useGeneratedKeys="true">
+		INSERT INTO 
+			u_education_experience (
+				userId, 
+				university, 
+				college, 
+				major, 
+				education, 
+				enterUniversityYear, 
+				endUniversityYear,
+				majorAbility,
+				grade
+		)VALUES( 
+				#{educationExperience.userId}, 
+				#{educationExperience.university}, 
+				#{educationExperience.college}, 
+				#{educationExperience.major}, 
+				#{educationExperience.education}, 
+				#{educationExperience.enterUniversityYear}, 
+				#{educationExperience.endUniversityYear},
+				#{educationExperience.majorAbility},
+				#{educationExperience.grade}
+		)
+	</insert>
+	
+	<select id="getByUserId" resultType="com.szfore.model.EducationExperience">
+		select * from u_education_experience where userId = #{userId}
+	</select>
+	
+	<update id="updeteEducationExperience">
+		UPDATE 
+			u_education_experience 
+		SET
+			<if test="educationExperience.userId != '' and educationExperience.userId != null">
+				userId = #{educationExperience.userId} , 
+			</if>
+			<if test="educationExperience.university != '' and educationExperience.university != null">
+				university = #{educationExperience.university} ,
+			</if>
+			<if test="educationExperience.college != '' and educationExperience.college != null"> 
+				college = #{educationExperience.college} , 
+			</if>
+			<if test="educationExperience.major != '' and educationExperience.major != null">
+				major = #{educationExperience.major} , 
+			</if>
+			<if test="educationExperience.education != '' and educationExperience.education != null">
+				education = #{educationExperience.education} , 
+			</if>
+			<if test="educationExperience.enterUniversityYear != '' and educationExperience.enterUniversityYear != null">
+				enterUniversityYear = #{educationExperience.enterUniversityYear} , 
+			</if>
+			<if test="educationExperience.endUniversityYear != '' and educationExperience.endUniversityYear != null">
+				endUniversityYear = #{educationExperience.endUniversityYear} , 
+			</if>
+			<if test="educationExperience.majorAbility != '' and educationExperience.majorAbility != null">
+				majorAbility = #{educationExperience.majorAbility},
+			</if>
+			<if test="educationExperience.grade != '' and educationExperience.grade != null">
+				grade = #{educationExperience.grade},
+			</if>
+				id = #{educationExperience.id} 
+		WHERE
+			id = #{educationExperience.id} 
+	</update>
+	
+	<delete id="deleteEducation">
+		DELETE FROM u_education_experience WHERE id = #{id} ;
+	</delete>
+	
+	<select id="getMaxByUid" resultType="com.szfore.model.EducationExperience">
+ 		SELECT 
+ 			b.* 
+ 		FROM 
+ 			u_userbasicinfo a LEFT JOIN u_education_experience b 
+ 		ON a.userId=b.userId WHERE a.userId = #{userId} GROUP BY a.id
+	</select>
+</mapper>
